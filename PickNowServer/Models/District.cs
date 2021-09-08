@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace PickNowServer.Models
 {
-    public class Province
+    public class District
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Country { get; set; }
+        public int Province { get; set; }
+        public int Code { get; set; }
     }
 }

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.Hosting;
+using PickNowServer.DbContexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace PickNowServer
 {
@@ -27,6 +29,11 @@ namespace PickNowServer
             services
                 .AddRazorPages()
                 .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+
+            string mySqlConnectionStr = Configuration.GetConnectionString("MySqlConnection");
+            services.AddDbContextPool<MyDbContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
