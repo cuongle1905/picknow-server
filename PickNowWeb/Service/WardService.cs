@@ -14,12 +14,7 @@ namespace PickNowWeb.Service
         {
             _dbContext = wardDbContext;
         }
-        public Ward AddWard(Ward ward)
-        {
-            _dbContext.Wards.Add(ward);
-            _dbContext.SaveChanges();
-            return ward;
-        }
+
         public List<Ward> GetWards()
         {
             return _dbContext.Wards.ToList();
@@ -34,6 +29,14 @@ namespace PickNowWeb.Service
         {
             var districtIds = _dbContext.Districts.Where(x => x.Province == provinceId).Select(e => e.Id);
             return (_dbContext.Wards.Where(e => districtIds.Contains(e.District)).ToList());
+        }
+
+        public Ward AddWard(Ward ward)
+        {
+            ward.Id = GetNewId();
+            _dbContext.Wards.Add(ward);
+            _dbContext.SaveChanges();
+            return ward;
         }
 
         public void UpdateWard(Ward ward)
@@ -57,5 +60,9 @@ namespace PickNowWeb.Service
             return _dbContext.Wards.FirstOrDefault(x => x.Id == Id);
         }
 
+        public int GetNewId()
+        {
+            return _dbContext.Wards.Max(w => w.Id) + 1;
+        }
     }
 }

@@ -12,12 +12,19 @@ namespace PickNowWeb.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WardController : ControllerBase
+    public class WardController : Controller
     {
         private readonly IWardService _wardService;
         public WardController(IWardService wardService)
         {
             _wardService = wardService;
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IList<Ward> Get()
+        {
+            return _wardService.GetWards();
         }
 
         [HttpPost]

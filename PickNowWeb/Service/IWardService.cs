@@ -15,5 +15,6 @@ namespace PickNowWeb.Service
         void UpdateWard(Ward ward);
         void DeleteWard(int Id);
         Ward GetWard(int Id);
+        int GetNewId();
     }
 }
