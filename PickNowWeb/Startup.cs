@@ -10,6 +10,8 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.Hosting;
 using PickNowWeb.DbContexts;
 using Microsoft.EntityFrameworkCore;
+using PickNowWeb.Service;
+using PickNowWeb.Models;
 
 namespace PickNowWeb
 {
@@ -34,6 +36,7 @@ namespace PickNowWeb
             services.AddDbContextPool<MyDbContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
 
             services.AddControllers();
+            services.AddScoped<IWardService, WardService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

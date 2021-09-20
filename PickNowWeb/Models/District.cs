@@ -1,15 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+#nullable disable
 
 namespace PickNowWeb.Models
 {
-    public class District
+    public partial class District
     {
+        public District()
+        {
+            Wards = new HashSet<Ward>();
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Province { get; set; }
-        public int Code { get; set; }
+        public short Province { get; set; }
+        public short? Code { get; set; }
+
+        public virtual Province ProvinceNavigation { get; set; }
+        public virtual ICollection<Ward> Wards { get; set; }
     }
 }

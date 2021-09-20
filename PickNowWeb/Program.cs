@@ -23,3 +23,5 @@ namespace PickNowWeb
                 });
     }
 }
+
+// Scaffold-DbContext "server=localhost; port=3306; database=picknow; user=root; password=root; Persist Security Info=False; Connect Timeout=300" Pomelo.EntityFrameworkCore.MySql -OutputDir Models -Context MyDbContext -f

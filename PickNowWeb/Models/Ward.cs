@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+#nullable disable
 
 namespace PickNowWeb.Models
 {
-    public class Ward
+    public partial class Ward
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public int District { get; set; }
-        public int Code { get; set; }
+        public int? Code { get; set; }
+
+        public virtual District DistrictNavigation { get; set; }
     }
 }

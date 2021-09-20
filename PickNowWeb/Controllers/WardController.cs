@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PickNowWeb.Service;
 
 namespace PickNowWeb.Controllers
 {
@@ -13,28 +14,50 @@ namespace PickNowWeb.Controllers
     [ApiController]
     public class WardController : ControllerBase
     {
-        private MyDbContext myDbContext;
-
-        public WardController(MyDbContext context)
+        private readonly IWardService _wardService;
+        public WardController(IWardService wardService)
         {
-            myDbContext = context;
+            _wardService = wardService;
         }
 
         [HttpPost]
         public IList<Ward> GetWards(GetWardsRequestBody requestBody)
         {
             if (requestBody.district_id > 0)
-                return (this.myDbContext.Wards.Where(e => e.District == requestBody.district_id).ToList());
-
+                return _wardService.GetWardsByDistrictId(requestBody.district_id);
             if (requestBody.province_id > 0)
-            {
-                var districtIds = this.myDbContext.Districts.Where(x => x.Province == requestBody.province_id).Select(e => e.Id);
+                return _wardService.GetWardsByProvinceId(requestBody.province_id);
 
-                return (this.myDbContext.Wards.Where(e => districtIds.Contains(e.District)).ToList());
-            }
-
-            return (this.myDbContext.Wards.ToList());
+            return _wardService.GetWards();
         }
 
+        [HttpPost]
+        [Route("[action]")]
+        public IActionResult Add(Ward ward)
+        {
+            _wardService.AddWard(ward);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public IActionResult Update(Ward ward)
+        {
+            _wardService.UpdateWard(ward);
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("[action]")]
+        public IActionResult Delete(int id)
+        {
+            var existingWard = _wardService.GetWard(id);
+            if (existingWard != null)
+            {
+                _wardService.DeleteWard(existingWard.Id);
+                return Ok();
+            }
+            return NotFound($"Ward Not Found with ID: {id}");
+        }
     }
 }

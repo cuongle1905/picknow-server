@@ -72,3 +72,4 @@ C:\OCS\git\picknow-server\PickNowWeb\bin\Debug\net5\System.Configuration.Configu
 C:\OCS\git\picknow-server\PickNowWeb\bin\Debug\net5\System.Diagnostics.DiagnosticSource.dll
 C:\OCS\git\picknow-server\PickNowWeb\bin\Debug\net5\System.Security.Cryptography.ProtectedData.dll
 C:\OCS\git\picknow-server\PickNowWeb\bin\Debug\net5\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\OCS\git\picknow-server\PickNowWeb\bin\Debug\net5\MySql.Data.EntityFrameworkCore.dll
