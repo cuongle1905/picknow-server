@@ -72,3 +72,4 @@ C:\OCS\git\picknow-server\PickNowWeb\obj\Release\net5\PickNowWeb.dll
 C:\OCS\git\picknow-server\PickNowWeb\obj\Release\net5\ref\PickNowWeb.dll
 C:\OCS\git\picknow-server\PickNowWeb\obj\Release\net5\PickNowWeb.pdb
 C:\OCS\git\picknow-server\PickNowWeb\obj\Release\net5\PickNowWeb.genruntimeconfig.cache
+C:\OCS\git\picknow-server\PickNowWeb\bin\Release\net5\MySql.Data.EntityFrameworkCore.dll
