@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "3IIa7ujHyweLicV2N06Mz3pey35qY0BvP5dYSHbLZbAqjmQdNAE1WJ1ybnLVs30JIgkZ48SxZvxG1dNoS65UMA==",
+  "dgSpecHash": "mSjmmySQ8Nr6VinyXCgiHoQ6O2yhQQiRoDWX1gUSdXYmjYrQTosaZtF2JahLCJcgC2K+N1727Art1NM+bZUePA==",
   "success": true,
   "projectFilePath": "C:\\OCS\\git\\picknow-server\\PickNowWeb\\PickNowWeb.csproj",
   "expectedPackageFiles": [
@@ -89,7 +89,6 @@
     "C:\\Users\\cuong\\.nuget\\packages\\microsoft.win32.registry\\4.4.0\\microsoft.win32.registry.4.4.0.nupkg.sha512",
     "C:\\Users\\cuong\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
     "C:\\Users\\cuong\\.nuget\\packages\\mysql.data\\8.0.26\\mysql.data.8.0.26.nupkg.sha512",
-    "C:\\Users\\cuong\\.nuget\\packages\\mysql.data.entityframeworkcore\\8.0.22\\mysql.data.entityframeworkcore.8.0.22.nupkg.sha512",
     "C:\\Users\\cuong\\.nuget\\packages\\mysqlconnector\\1.3.10\\mysqlconnector.1.3.10.nupkg.sha512",
     "C:\\Users\\cuong\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\cuong\\.nuget\\packages\\newtonsoft.json\\11.0.1\\newtonsoft.json.11.0.1.nupkg.sha512",
