@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PickNowWeb.Models;
+using GetNowServer.Models;
 
-namespace PickNowWeb.Service
+namespace GetNowServer.Service
 {
     public interface IWardService
     {

@@ -1,9 +1,10 @@
 @page
-@using PickNowWeb.Models
+@using GetNowServer.Models
 
 <h2 class="content-block">Home</h2>
 
-@(Html.DevExtreme().DataGrid<PickNowWeb.Models.Ward>()
+@(Html.DevExtreme().DataGrid<GetNowServer.Models.Ward>()
+    .ShowBorders(true)
     .DataSource(ds => ds.Mvc()
         .Controller("Wards")
         .LoadAction("Get")

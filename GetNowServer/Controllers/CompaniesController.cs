@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using PickNowWeb.Models;
+using GetNowServer.Models;
 
-namespace PickNowWeb.Controllers
+namespace GetNowServer.Controllers
 {
     [Route("api/[controller]/[action]")]
     public class CompaniesController : Controller

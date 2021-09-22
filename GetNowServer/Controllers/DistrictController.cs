@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PickNowWeb.Models;
+using GetNowServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PickNowWeb.Controllers
+namespace GetNowServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

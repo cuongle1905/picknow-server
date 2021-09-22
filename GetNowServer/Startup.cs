@@ -9,8 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using PickNowWeb.Service;
-using PickNowWeb.Models;
+using GetNowServer.Service;
+using GetNowServer.Models;
 
 namespace GetNowServer
 {

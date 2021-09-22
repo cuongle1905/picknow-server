@@ -1,9 +1,10 @@
 ﻿@page
-@model PickNowWeb.Pages.CompaniesModel
+@model GetNowServer.Pages.CompaniesModel
 
-<h2 class="content-block">Home</h2>
+<h2 class="content-block">Companies</h2>
 
-@(Html.DevExtreme().DataGrid<PickNowWeb.Models.Company>()
+@(Html.DevExtreme().DataGrid<GetNowServer.Models.Company>()
+    .ShowBorders(true)
     .DataSource(ds => ds.Mvc()
         .Controller("Companies")
         .LoadAction("Get")

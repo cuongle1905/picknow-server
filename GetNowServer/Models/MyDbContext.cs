@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace PickNowWeb.Models
+namespace GetNowServer.Models
 {
     public partial class MyDbContext : DbContext
     {

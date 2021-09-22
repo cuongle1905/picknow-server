@@ -1,7 +1,7 @@
 ﻿@page
-@model PickNowWeb.Pages.DistrictsModel
+@model GetNowServer.Pages.DistrictsModel
 
-@(Html.DevExtreme().DataGrid<PickNowWeb.Models.District>()
+@(Html.DevExtreme().DataGrid<GetNowServer.Models.District>()
     .DataSource(ds => ds.Mvc()
         .Controller("Districts")
         .LoadAction("Get")
