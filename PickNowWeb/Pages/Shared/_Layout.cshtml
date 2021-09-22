@@ -52,7 +52,7 @@
                         <div class="content-block">
                             <div class="content-footer">
                                 <div id="footer">
-                                    Copyright (c) 2000-2020 Developer Express Inc.
+                                    Copyright (c) 2000-2021 OCSVN.
                                     <br />
                                     All trademarks or registered trademarks are property of their respective owners.
                                 </div>
@@ -81,6 +81,18 @@
                         .Icon("home")
                         .Option("path", GetUrl("Index"))
                         .Selected(IsCurrentUrl("Index"));
+
+                    items.Add()
+                        .Text("Companies")
+                        .Icon("info")
+                        .Option("path", GetUrl("Company"))
+                        .Selected(IsCurrentUrl("Company"));
+
+                    items.Add()
+                        .Text("Stores")
+                        .Icon("info")
+                        .Option("path", GetUrl("Stores"))
+                        .Selected(IsCurrentUrl("Stores"));
 
                     items.Add()
                         .Text("About")

@@ -5,19 +5,21 @@ using System.Collections.Generic;
 
 namespace PickNowWeb.Models
 {
-    public partial class Ward
+    public partial class Company
     {
-        public Ward()
+        public Company()
         {
             Stores = new HashSet<Store>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public int District { get; set; }
-        public int? Code { get; set; }
+        public string Phone { get; set; }
+        public string Phone2 { get; set; }
+        public string Email { get; set; }
+        public string TaxCode { get; set; }
+        public string Logo { get; set; }
 
-        public virtual District DistrictNavigation { get; set; }
         public virtual ICollection<Store> Stores { get; set; }
     }
 }

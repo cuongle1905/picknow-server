@@ -1,0 +1,2 @@
+cmd (run as Administrator):
+mysqldump -u'root' -proot picknow > picknow.sql
