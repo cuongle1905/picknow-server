@@ -9,6 +9,8 @@ namespace PickNowWeb.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public short Province { get; set; }
+        public int District { get; set; }
         public int Ward { get; set; }
         public string Address { get; set; }
         public int? Company { get; set; }
@@ -18,6 +20,8 @@ namespace PickNowWeb.Models
         public string Website { get; set; }
 
         public virtual Company CompanyNavigation { get; set; }
+        public virtual District DistrictNavigation { get; set; }
+        public virtual Province ProvinceNavigation { get; set; }
         public virtual Ward WardNavigation { get; set; }
     }
 }

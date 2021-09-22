@@ -1,0 +1,102 @@
+﻿@page
+@model PickNowWeb.Pages.StoresModel
+@(Html.DevExtreme().DataGrid<PickNowWeb.Models.Store>()
+    .DataSource(ds => ds.Mvc()
+        .Controller("Stores")
+        .LoadAction("Get")
+        .InsertAction("Post")
+        .UpdateAction("Put")
+        .DeleteAction("Delete")
+        .Key("Id")
+    )
+    .Editing(e => e.Mode(GridEditMode.Popup))
+    .OnEditorPreparing("onEditorPreparing")
+    //.RemoteOperations(true)
+    .Columns(columns => {
+
+        columns.AddFor(m => m.Id);
+
+        columns.AddFor(m => m.Name);
+
+        columns.AddFor(m => m.Province)
+            .SetCellValue("setProvince")
+            .Lookup(lookup => lookup
+                .DataSource(ds => ds.WebApi().Controller("Stores").LoadAction("ProvincesLookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(m => m.District)
+            .SetCellValue("setDistrict")
+            .Lookup(lookup => lookup
+                .DataSource("getDistricts")
+                .ValueExpr("Id")
+                .DisplayExpr("Name")
+            );
+
+        columns.AddFor(m => m.Ward).Lookup(lookup => lookup
+            .DataSource("getWards")
+            .ValueExpr("Id")
+            .DisplayExpr("Name")
+        );
+
+        columns.AddFor(m => m.Address);
+
+        columns.AddFor(m => m.Company).Lookup(lookup => lookup
+            .DataSource(ds => ds.WebApi().Controller("Stores").LoadAction("CompaniesLookup").Key("Value"))
+            .ValueExpr("Value")
+            .DisplayExpr("Text")
+        );
+
+        /*columns.AddFor(m => m.ContactName);
+
+        columns.AddFor(m => m.ContactPhone);
+
+        columns.AddFor(m => m.ContactPhone2);
+
+        columns.AddFor(m => m.Website);*/
+    })
+    .Editing(e => e
+        .Mode(GridEditMode.Popup)
+        .AllowAdding(true)
+        .AllowUpdating(true)
+        .AllowDeleting(true)
+    )
+)
+
+<script>
+    function onEditorPreparing(e) {
+        if (e.parentType === "dataRow") {
+            if (e.dataField === "District")
+                e.editorOptions.disabled = (typeof e.row.data.Province !== "number");
+            else if (e.dataField === "Ward")
+                e.editorOptions.disabled = (typeof e.row.data.District !== "number");
+        }
+    }
+    function getDistricts(options) {
+        return {
+            store: DevExpress.data.AspNet.createStore({
+                key: "Id",
+                loadUrl: '@Url.Action("Get", "DistrictsLookup", new { httproute = true })'
+            }),
+            filter: options.data ? ["Province", "=", options.data.Province] : null
+        };
+    }
+    function setProvince(rowData, value) {
+        rowData.Province = value;
+        rowData.District = null;
+    }
+    function getWards(options) {
+        return {
+            store: DevExpress.data.AspNet.createStore({
+                key: "Id",
+                loadUrl: '@Url.Action("Get", "WardsLookup", new { httproute = true })'
+            }),
+            filter: options.data ? ["District", "=", options.data.District] : null
+        };
+    }
+    function setDistrict(rowData, value) {
+        rowData.District = value;
+        rowData.Ward = null;
+    }
+</script>

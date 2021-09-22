@@ -8,6 +8,7 @@ namespace PickNowWeb.Models
 {
     public partial class MyDbContext : DbContext
     {
+
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
@@ -212,6 +213,10 @@ namespace PickNowWeb.Models
 
                 entity.HasIndex(e => e.Company, "fk_company_idx");
 
+                entity.HasIndex(e => e.District, "fk_district_idx");
+
+                entity.HasIndex(e => e.Province, "fk_province_idx");
+
                 entity.HasIndex(e => e.Ward, "fk_ward_idx");
 
                 entity.Property(e => e.Id)
@@ -241,10 +246,14 @@ namespace PickNowWeb.Models
                     .HasMaxLength(20)
                     .HasColumnName("contact_phone2");
 
+                entity.Property(e => e.District).HasColumnName("district");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("name");
+
+                entity.Property(e => e.Province).HasColumnName("province");
 
                 entity.Property(e => e.Ward).HasColumnName("ward");
 
@@ -255,13 +264,25 @@ namespace PickNowWeb.Models
                 entity.HasOne(d => d.CompanyNavigation)
                     .WithMany(p => p.Stores)
                     .HasForeignKey(d => d.Company)
-                    .HasConstraintName("fk_company");
+                    .HasConstraintName("fk_store_company");
+
+                entity.HasOne(d => d.DistrictNavigation)
+                    .WithMany(p => p.Stores)
+                    .HasForeignKey(d => d.District)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_store_district");
+
+                entity.HasOne(d => d.ProvinceNavigation)
+                    .WithMany(p => p.Stores)
+                    .HasForeignKey(d => d.Province)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_store_province");
 
                 entity.HasOne(d => d.WardNavigation)
                     .WithMany(p => p.Stores)
                     .HasForeignKey(d => d.Ward)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_ward");
+                    .HasConstraintName("fk_store_ward");
             });
 
             modelBuilder.Entity<Ward>(entity =>

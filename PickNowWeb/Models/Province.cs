@@ -10,6 +10,7 @@ namespace PickNowWeb.Models
         public Province()
         {
             Districts = new HashSet<District>();
+            Stores = new HashSet<Store>();
         }
 
         public short Id { get; set; }
@@ -18,5 +19,6 @@ namespace PickNowWeb.Models
 
         public virtual Country CountryNavigation { get; set; }
         public virtual ICollection<District> Districts { get; set; }
+        public virtual ICollection<Store> Stores { get; set; }
     }
 }

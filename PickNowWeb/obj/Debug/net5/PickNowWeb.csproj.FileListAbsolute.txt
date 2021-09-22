@@ -169,5 +169,6 @@ C:\OCS\git\picknow-server\PickNowWeb\obj\Debug\net5\RazorDeclaration\Pages\Compo
 C:\OCS\git\picknow-server\PickNowWeb\obj\Debug\net5\PickNowWeb.RazorComponent.output.cache
 C:\OCS\git\picknow-server\PickNowWeb\obj\Debug\net5\RazorDeclaration\PickNowWeb.dll
 C:\OCS\git\picknow-server\PickNowWeb\obj\Debug\net5\Razor\Pages\Component.razor.g.cs
-C:\OCS\git\picknow-server\PickNowWeb\obj\Debug\net5\Razor\Pages\Company.cshtml.g.cs
 C:\OCS\git\picknow-server\PickNowWeb\obj\Debug\net5\Razor\Pages\Stores.cshtml.g.cs
+C:\OCS\git\picknow-server\PickNowWeb\obj\Debug\net5\Razor\Pages\Companies.cshtml.g.cs
+C:\OCS\git\picknow-server\PickNowWeb\obj\Debug\net5\Razor\Pages\Districts.cshtml.g.cs

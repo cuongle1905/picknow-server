@@ -9,6 +9,7 @@ namespace PickNowWeb.Models
     {
         public District()
         {
+            Stores = new HashSet<Store>();
             Wards = new HashSet<Ward>();
         }
 
@@ -18,6 +19,7 @@ namespace PickNowWeb.Models
         public short? Code { get; set; }
 
         public virtual Province ProvinceNavigation { get; set; }
+        public virtual ICollection<Store> Stores { get; set; }
         public virtual ICollection<Ward> Wards { get; set; }
     }
 }

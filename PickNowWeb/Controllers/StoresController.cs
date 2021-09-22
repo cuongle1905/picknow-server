@@ -28,6 +28,8 @@ namespace PickNowWeb.Controllers
             var stores = _context.Stores.Select(i => new {
                 i.Id,
                 i.Name,
+                i.Province,
+                i.District,
                 i.Ward,
                 i.Address,
                 i.Company,
@@ -98,6 +100,28 @@ namespace PickNowWeb.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> DistrictsLookup(DataSourceLoadOptions loadOptions) {
+            var lookup = from i in _context.Districts
+                         orderby i.Name
+                         select new {
+                             Value = i.Id,
+                             Text = i.Name
+                         };
+            return Json(await DataSourceLoader.LoadAsync(lookup, loadOptions));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ProvincesLookup(DataSourceLoadOptions loadOptions) {
+            var lookup = from i in _context.Provinces
+                         orderby i.Name
+                         select new {
+                             Value = i.Id,
+                             Text = i.Name
+                         };
+            return Json(await DataSourceLoader.LoadAsync(lookup, loadOptions));
+        }
+
+        [HttpGet]
         public async Task<IActionResult> WardsLookup(DataSourceLoadOptions loadOptions) {
             var lookup = from i in _context.Wards
                          orderby i.Name
@@ -111,6 +135,8 @@ namespace PickNowWeb.Controllers
         private void PopulateModel(Store model, IDictionary values) {
             string ID = nameof(Store.Id);
             string NAME = nameof(Store.Name);
+            string PROVINCE = nameof(Store.Province);
+            string DISTRICT = nameof(Store.District);
             string WARD = nameof(Store.Ward);
             string ADDRESS = nameof(Store.Address);
             string COMPANY = nameof(Store.Company);
@@ -125,6 +151,14 @@ namespace PickNowWeb.Controllers
 
             if(values.Contains(NAME)) {
                 model.Name = Convert.ToString(values[NAME]);
+            }
+
+            if(values.Contains(PROVINCE)) {
+                model.Province = Convert.ToInt16(values[PROVINCE]);
+            }
+
+            if(values.Contains(DISTRICT)) {
+                model.District = Convert.ToInt32(values[DISTRICT]);
             }
 
             if(values.Contains(WARD)) {
