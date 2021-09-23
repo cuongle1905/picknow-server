@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>GetNowServer</title>
+    <title>Get Now</title>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
     @* Uncomment to use the HtmlEditor control *@
@@ -17,31 +17,39 @@
     <link rel="stylesheet" href="~/css/vendor.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Site.css" />
     <script src="~/js/vendor.js" asp-append-version="true"></script>
+    <script src="~/js/common.js"></script>
 </head>
 
 <body style="padding-top: 5rem;">
 
     <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-md">
-        <a class="navbar-brand" href="/">GetNowServer</a>
+        <a class="navbar-brand" href="/">Get Now</a>
 
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div id="navbar" class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="active nav-item"><a href="Index" class="nav-link">Home</a></li>
-                <li class="nav-item"><a href="Companies" class="nav-link">Companies</a></li>
-                <li class="nav-item"><a href="Stores" class="nav-link">Stores</a></li>
-                <li class="nav-item"><a href="About" class="nav-link">About</a></li>
-                <li class="nav-item"><a href="Contact" class="nav-link">Contact</a></li>
+            <ul id="navbar1" class="navbar-nav mr-auto">
+                <li id="ni-home" class="active nav-item"><a href="Index" class="nav-link">Home</a></li>
+                <li id="ni-companies" class="nav-item"><a href="Companies" class="nav-link">Companies</a></li>
+                <li id="ni-stores" class="nav-item"><a href="Stores" class="nav-link">Stores</a></li>
+                <li id="ni-about" class="nav-item"><a href="About" class="nav-link">About</a></li>
+                <li id="ni-contact" class="nav-item"><a href="Contact" class="nav-link">Contact</a></li>
             </ul>
         </div>
+        <script>
+            selectedMenuItemId = "#ni-stores"
+        </script>
     </nav>
 
     <main role="main" class="container">
         @RenderBody()
     </main>
+    <script>
+        $(".nav-item").removeClass("active")
+        $("#navbar1").find(selectedMenuItemId).addClass("active")
+    </script>
 </body>
 
 </html>

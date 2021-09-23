@@ -1,8 +1,55 @@
 ﻿@page
 @model GetNowServer.Pages.StoresModel
 
-<h2 class="content-block">Stores</h2>
+<script>
+    selectedMenuItemId = "#ni-stores"
+    var provincesUrl = '@Url.Action("ProvincesLookup", "Districts")'
+    var provinces;
+    $.ajax({
+        url: provincesUrl,
+        type: "GET",
+        success: function (data) {
+            provinces = data["data"];
+            $("#my-div").append("<br/>Received provinces: ");
+            $("#my-div").append(provinces[0]["Name"]);
+        }
+    });
+    var districtsUrl = '@Url.Action("Get", "Districts")'
+    var districts;
+    $.ajax({
+        url: districtsUrl,
+        type: "GET",
+        success: function (data) {
+            districts = data["data"];
+            $("#my-div").append("<br/>Received districts: ");
+            $("#my-div").append(districts[0]["Name"]);
+        }
+    });
+    var wardsUrl = '@Url.Action("Get", "Wards")'
+    var wards;
+    $.ajax({
+        url: wardsUrl,
+        type: "GET",
+        success: function (data) {
+            wards = data["data"];
+            $("#my-div").append("<br/>Received wards: ");
+            $("#my-div").append(wards[0]["Name"]);
+        }
+    });
+    var companiesUrl = '@Url.Action("Get", "Companies")'
+    var companies;
+    $.ajax({
+        url: companiesUrl,
+        type: "GET",
+        success: function (data) {
+            companies = data["data"];
+            $("#my-div").append("<br/>Received companies: ");
+            $("#my-div").append(companies[0]["Name"]);
+        }
+    });
 
+</script>
+<h2 class="content-block">Stores</h2>
 @(Html.DevExtreme().DataGrid<GetNowServer.Models.Store>()
     .DataSource(ds => ds.Mvc()
         .Controller("Stores")
@@ -17,14 +64,19 @@
     //.RemoteOperations(true)
     .Columns(columns => {
 
-        columns.AddFor(m => m.Id).Alignment(HorizontalAlignment.Center).Width(50);
+        columns.AddFor(m => m.Id).Alignment(HorizontalAlignment.Center).CssClass("col-1");
 
-        columns.AddFor(m => m.Name);
+        columns.AddFor(m => m.Name).CalculateFilterExpression(@<text>
+            function (filterValue, selectedFilterOperation, target) {
+                return filterTextVN(filterValue, selectedFilterOperation);
+            }
+        </text>);
 
         columns.AddFor(m => m.Province)
             .SetCellValue("setProvince")
             .Lookup(lookup => lookup
-                .DataSource(ds => ds.WebApi().Controller("Stores").LoadAction("ProvincesLookup").Key("Value"))
+                //.DataSource(ds => ds.WebApi().Controller("Stores").LoadAction("ProvincesLookup").Key("Value"))
+                .DataSource("getProvinces")
                 .ValueExpr("Value")
                 .DisplayExpr("Text")
             );
@@ -46,9 +98,9 @@
         columns.AddFor(m => m.Address);
 
         columns.AddFor(m => m.Company).Lookup(lookup => lookup
-            .DataSource(ds => ds.WebApi().Controller("Stores").LoadAction("CompaniesLookup").Key("Value"))
-            .ValueExpr("Value")
-            .DisplayExpr("Text")
+            .DataSource("getCompanies")
+            .ValueExpr("Id")
+            .DisplayExpr("Name")
         );
 
         /*columns.AddFor(m => m.ContactName);
@@ -59,6 +111,10 @@
 
         columns.AddFor(m => m.Website);*/
     })
+    .FilterRow(filterRow => filterRow
+        .Visible(true)
+        .ApplyFilter(GridApplyFilterMode.Auto)
+    )
     .Editing(e => e
         .Mode(GridEditMode.Popup)
         .AllowAdding(true)
@@ -78,12 +134,19 @@
                 {
                     groupItems.AddSimpleFor(m => m.Id);
                     groupItems.AddSimpleFor(m => m.Name);
+                    groupItems.AddSimpleFor(m => m.Company);
+                //groupItems.AddSimpleFor(m => m.Notes).ColSpan(2).Editor(editor => editor.TextArea().Height(100));
+            });
+            items.AddGroup()
+                .Caption("Address")
+                .ColCount(2)
+                .ColSpan(2)
+                .Items(groupItems =>
+                {
                     groupItems.AddSimpleFor(m => m.Province);
                     groupItems.AddSimpleFor(m => m.District);
                     groupItems.AddSimpleFor(m => m.Ward);
                     groupItems.AddSimpleFor(m => m.Address);
-                    groupItems.AddSimpleFor(m => m.Company);
-                    //groupItems.AddSimpleFor(m => m.Notes).ColSpan(2).Editor(editor => editor.TextArea().Height(100));
                 });
 
             //items.AddGroup()
@@ -97,9 +160,22 @@
             //    });
         }))
     )
+    .OnInitNewRow(@<text>
+        function(e) {
+            e.data.Province = 1;
+            e.component.option("editing.popup.title", "Create New Store");
+        }
+    </text>)
+    .OnEditingStart(@<text>
+        function(e) {
+            e.component.option("editing.popup.title", "Update Store: " + e.data.Name);
+        }
+    </text>)
 )
-
+<div><br /><button type="button" onclick="$('#my-div').empty();">Clear</button></div>
+<div id="my-div"></div>
 <script>
+
     function onEditorPreparing(e) {
         if (e.parentType === "dataRow") {
             if (e.dataField === "District")
@@ -108,30 +184,78 @@
                 e.editorOptions.disabled = (typeof e.row.data.District !== "number");
         }
     }
+    function getProvinces(options) {
+        if (provinces == undefined) {
+            $("#my-div").append("<br/>Load provinces from server.");
+            return {
+                store: DevExpress.data.AspNet.createStore({
+                    key: "Id",
+                    loadMode: "raw",
+                    cacheRawData: true,
+                    loadUrl: provincesUrl
+                })
+            };
+        } else {
+            $("#my-div").append("<br/>Load provinces from client.");
+            return provinces;
+        }
+    }
     function getDistricts(options) {
-        return {
-            store: DevExpress.data.AspNet.createStore({
-                key: "Id",
-                loadUrl: '@Url.Action("Get", "DistrictsLookup", new { httproute = true })'
-            }),
-            filter: options.data ? ["Province", "=", options.data.Province] : null
-        };
+        if (districts == undefined) {
+            $("#my-div").append("<br/>Load districts from server.");
+            return {
+                store: DevExpress.data.AspNet.createStore({
+                    key: "Id",
+                    loadMode: "raw",
+                    cacheRawData: true,
+                    loadUrl: districtsUrl
+                }),
+                filter: options.data ? ["Province", "=", options.data.Province] : null
+            };
+        } else {
+            $("#my-div").append("<br/>Load districts from client.");
+            return options.data ? districts.filter(d => d.Province == options.data.Province) : districts;
+        }
     }
     function setProvince(rowData, value) {
         rowData.Province = value;
         rowData.District = null;
     }
     function getWards(options) {
-        return {
-            store: DevExpress.data.AspNet.createStore({
-                key: "Id",
-                loadUrl: '@Url.Action("Get", "WardsLookup", new { httproute = true })'
-            }),
-            filter: options.data ? ["District", "=", options.data.District] : null
-        };
+        if (wards == undefined) {
+            $("#my-div").append("<br/>Load wards from server.");
+            return {
+                store: DevExpress.data.AspNet.createStore({
+                    key: "Id",
+                    loadMode: "raw",
+                    cacheRawData: true,
+                    loadUrl: wardsUrl //'@Url.Action("Get", "WardsLookup", new { httproute = true })'
+                })/*,
+                filter: options.data ? ["District", "=", options.data.District] : null*/
+            };
+        } else {
+            $("#my-div").append("<br/>Load wards from client.");
+            return options.data ? wards.filter(w => w.District == options.data.District) : wards;
+        }
     }
     function setDistrict(rowData, value) {
         rowData.District = value;
         rowData.Ward = null;
+    }
+    function getCompanies(options) {
+        if (companies == undefined) {
+            $("#my-div").append("<br/>Load companies from server.");
+            return {
+                store: DevExpress.data.AspNet.createStore({
+                    key: "Id",
+                    loadMode: "raw",
+                    cacheRawData: true,
+                    loadUrl: companiesUrl
+                })
+            };
+        } else {
+            $("#my-div").append("<br/>Load companies from client.");
+            return companies
+        }
     }
 </script>

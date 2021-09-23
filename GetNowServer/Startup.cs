@@ -30,12 +30,18 @@ namespace GetNowServer
             services
                 .AddRazorPages()
                 .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+            
+            //services.AddMvc().AddRazorPagesOptions(options =>
+            //{
+            //    options.Conventions.AddPageRoute("/Stores", "");
+            //});
 
             string mySqlConnectionStr = Configuration.GetConnectionString("MySqlConnection");
             services.AddDbContextPool<MyDbContext>(options => options.UseMySql(mySqlConnectionStr, ServerVersion.AutoDetect(mySqlConnectionStr)));
 
             services.AddControllers();
             services.AddScoped<IWardService, WardService>();
+            services.AddResponseCaching();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +67,7 @@ namespace GetNowServer
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
+            app.UseResponseCaching();
         }
     }
 }

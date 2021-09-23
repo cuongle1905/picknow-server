@@ -1,6 +1,9 @@
 ﻿@page
 @model GetNowServer.Pages.CompaniesModel
 
+<script>
+    selectedMenuItemId = "#ni-companies"
+</script>
 <h2 class="content-block">Companies</h2>
 
 @(Html.DevExtreme().DataGrid<GetNowServer.Models.Company>()
@@ -16,9 +19,13 @@
     .RemoteOperations(true)
     .Columns(columns => {
 
-        columns.AddFor(m => m.Id);
+        columns.AddFor(m => m.Id).Alignment(HorizontalAlignment.Center).CssClass("col-1");
 
-        columns.AddFor(m => m.Name);
+        columns.AddFor(m => m.Name).CalculateFilterExpression(@<text>
+            function (filterValue, selectedFilterOperation, target) {
+                return filterTextVN(filterValue, selectedFilterOperation);
+            }
+        </text>);
 
         columns.AddFor(m => m.Phone);
 
