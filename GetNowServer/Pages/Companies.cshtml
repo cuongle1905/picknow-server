@@ -1,8 +1,48 @@
 ﻿@page
 @model GetNowServer.Pages.CompaniesModel
+<style type="text/css">
+    .cell-icon {
+        width: auto;
+        max-height: 24px;
+        max-width: 100%;
+    }
 
+    .cell-icon-container {
+        padding: 4px 4px;
+        cursor: pointer;
+    }
+
+    #removeIconButton {
+        margin-top: 30px;
+    }
+
+    .dx-popover-arrow {
+        display: block;
+    }
+</style>
 <script>
     selectedMenuItemId = "#ni-companies"
+    var companyLogosUrl = '@Url.Action("Get", "CompanyLogo")'
+    var companyLogos = {};
+    $.ajax({
+        url: companyLogosUrl,
+        type: "GET",
+        success: function (data) {
+            console.log("Received imageInfos: ");
+            $.each(data, function (key, value) {
+                companyLogos[value.CompanyId] = value.FileName;
+                console.log(value.CompanyId + ", " + value.FileName);
+                $("#itemImg" + value.CompanyId).attr("src", value.FileName);
+            });
+        }
+    });
+    
+    function refreshLogos() {
+        $.each(companyLogos, function (key, value) {
+            console.log("Refresh logo " + key + ", " + value);
+            $("#itemImg" + key).attr("src", "/data_images/" + value);
+        });
+    }
 </script>
 <h2 class="content-block">Companies</h2>
 
@@ -35,11 +75,113 @@
 
         columns.AddFor(m => m.TaxCode);
 
-        columns.AddFor(m => m.Logo);
+        columns.AddFor(m => m.Logo)
+            .Alignment(HorizontalAlignment.Center)
+            .AllowFiltering(false)
+            .AllowSorting(false)
+            .AllowEditing(false)
+            .CssClass("col-1")
+            .CellTemplate(@<text>
+                @(await Html.PartialAsync("_IconCellTemplate"))
+            </text>);
     })
     .Editing(e => e
+        .Mode(GridEditMode.Popup)
         .AllowAdding(true)
         .AllowUpdating(true)
         .AllowDeleting(true)
     )
+    .OnContentReady(@<text>
+        function(e) {
+            refreshLogos();
+        }
+    </text>)
 )
+<div id="changeIconPopoverContainer">
+    <div id="changeIconFileUploader"></div>
+    <div id="removeIconButton"></div>
+</div>
+
+<script>
+</script>
+
+<script>
+    $("#changeIconFileUploader").dxFileUploader({
+        multiple: false,
+        accept: "*",
+        value: [],
+        name: "myFile1",
+        uploadMode: "instantly",
+        uploadUrl: '@Url.Action("CompanyLogo", "Upload")',
+        allowedFileExtensions: [".png", ".jpg", ".jpeg"],
+        minFileSize: 128,
+        maxFileSize: 100 * 1024,
+        onUploaded: function (e) {
+            $("#changeIconPopoverContainer").dxPopover("hide");
+            var fileUploader = e.component;
+            fileUploader.reset();
+            var name = fileUploader.option("name");
+            var dataId = name.replace("myFile", "");
+            var img = document.getElementById("itemImg" + dataId);
+            img.src = "/data_images/" + e.request.responseText;
+            console.log("Uploaded image");
+            console.log(e.request.responseText);
+        }
+    });
+
+    $("#removeIconButton").dxButton({
+        stylingMode: "contained",
+        text: "Remove Icon",
+        type: "danger",
+        width: 160,
+        onClick: function () {
+            $.ajax({
+                url: '@Url.Action("Remove", "Upload")',
+                data: { dataId: $("#removeIconButton").attr("dataId") },
+                dataType: "text",
+                type: "POST",
+                success: function (response) {
+                    $("#changeIconPopoverContainer").dxPopover("hide");
+                    var dataId = $("#removeIconButton").attr("dataId");
+                    var img = document.getElementById("itemImg" + dataId);
+                    img.src = "";
+                },
+                failure: function (response) {
+                    alert("failure " + response.responseText);
+                },
+                error: function (response) {
+                    alert("error " + response.responseText);
+                }
+            });
+        }
+    });
+
+    $("#changeIconPopoverContainer").dxPopover({
+        target: "#itemImgLink1",
+        showEvent: "dxclick",
+        position: "top",
+        width: 400,
+        title: "Change Icon:",
+        showTitle: true,
+        showCloseButton: true,
+        shading: true,
+        shadingColor: "rgba(0, 0, 0, 0.5)"
+    });
+
+    function showChangeIconPopover(dataId) {
+        $("#changeIconPopoverContainer").dxPopover("show", "#itemImgLink" + dataId);
+        var fileUploader = $("#changeIconFileUploader").dxFileUploader("instance");
+        fileUploader.option("name", "myFile" + dataId);
+
+        var img = document.getElementById("itemImg" + dataId);
+        if (img.complete && img.naturalHeight !== 0) {
+            //alert("hi");
+            $("#removeIconButton").dxButton("instance").option("visible", true);
+            $("#removeIconButton").attr("dataId", dataId);
+        } else {
+            //alert("bye");
+            $("#removeIconButton").dxButton("instance").option("visible", false);
+        }
+
+    }
+</script>

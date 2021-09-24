@@ -1,0 +1,11 @@
+﻿@{ Layout = null; }
+<div><a id="itemImgLink<%- data.Id %>" name="itemImgLink<%- data.Id %>" class="cell-icon-container" title="Click to change">
+    <img id="itemImg<%- data.Id %>" class="cell-icon" src="~/images/1.png" alt="" />
+ </a></div>
+<script>
+    $("#itemImgLink<%- data.Id %>").click(function () {
+        var dataId = parseInt(this.name.replace("itemImgLink", ""))
+        showChangeIconPopover(dataId)
+    });
+</script>
+

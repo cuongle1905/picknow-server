@@ -15,24 +15,19 @@ using GetNowServer.Models;
 namespace GetNowServer.Controllers
 {
     [Route("api/[controller]/[action]")]
-    public class CompaniesController : Controller
+    public class ImageInfoController : Controller
     {
         private MyDbContext _context;
 
-        public CompaniesController(MyDbContext context) {
+        public ImageInfoController(MyDbContext context) {
             _context = context;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(DataSourceLoadOptions loadOptions) {
-            var companies = _context.Companies.Select(i => new {
+            var imageinfos = _context.ImageInfos.Select(i => new {
                 i.Id,
-                i.Name,
-                i.Phone,
-                i.Phone2,
-                i.Email,
-                i.TaxCode,
-                i.Logo
+                i.FileName
             });
 
             // If you work with a large amount of data, consider specifying the PaginateViaPrimaryKey and PrimaryKey properties.
@@ -41,19 +36,19 @@ namespace GetNowServer.Controllers
             // loadOptions.PrimaryKey = new[] { "Id" };
             // loadOptions.PaginateViaPrimaryKey = true;
 
-            return Json(await DataSourceLoader.LoadAsync(companies, loadOptions));
+            return Json(await DataSourceLoader.LoadAsync(imageinfos, loadOptions));
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(string values) {
-            var model = new Company();
+            var model = new ImageInfo();
             var valuesDict = JsonConvert.DeserializeObject<IDictionary>(values);
             PopulateModel(model, valuesDict);
 
             if(!TryValidateModel(model))
                 return BadRequest(GetFullErrorMessage(ModelState));
 
-            var result = _context.Companies.Add(model);
+            var result = _context.ImageInfos.Add(model);
             await _context.SaveChangesAsync();
 
             return Json(new { result.Entity.Id });
@@ -61,7 +56,7 @@ namespace GetNowServer.Controllers
 
         [HttpPut]
         public async Task<IActionResult> Put(int key, string values) {
-            var model = await _context.Companies.FirstOrDefaultAsync(item => item.Id == key);
+            var model = await _context.ImageInfos.FirstOrDefaultAsync(item => item.Id == key);
             if(model == null)
                 return StatusCode(409, "Object not found");
 
@@ -77,48 +72,23 @@ namespace GetNowServer.Controllers
 
         [HttpDelete]
         public async Task Delete(int key) {
-            var model = await _context.Companies.FirstOrDefaultAsync(item => item.Id == key);
+            var model = await _context.ImageInfos.FirstOrDefaultAsync(item => item.Id == key);
 
-            _context.Companies.Remove(model);
+            _context.ImageInfos.Remove(model);
             await _context.SaveChangesAsync();
         }
 
 
-        private void PopulateModel(Company model, IDictionary values) {
-            string ID = nameof(Company.Id);
-            string NAME = nameof(Company.Name);
-            string PHONE = nameof(Company.Phone);
-            string PHONE2 = nameof(Company.Phone2);
-            string EMAIL = nameof(Company.Email);
-            string TAX_CODE = nameof(Company.TaxCode);
-            string LOGO = nameof(Company.Logo);
+        private void PopulateModel(ImageInfo model, IDictionary values) {
+            string ID = nameof(ImageInfo.Id);
+            string FILE_NAME = nameof(ImageInfo.FileName);
 
             if(values.Contains(ID)) {
                 model.Id = Convert.ToInt32(values[ID]);
             }
 
-            if(values.Contains(NAME)) {
-                model.Name = Convert.ToString(values[NAME]);
-            }
-
-            if(values.Contains(PHONE)) {
-                model.Phone = Convert.ToString(values[PHONE]);
-            }
-
-            if(values.Contains(PHONE2)) {
-                model.Phone2 = Convert.ToString(values[PHONE2]);
-            }
-
-            if(values.Contains(EMAIL)) {
-                model.Email = Convert.ToString(values[EMAIL]);
-            }
-
-            if(values.Contains(TAX_CODE)) {
-                model.TaxCode = Convert.ToString(values[TAX_CODE]);
-            }
-
-            if(values.Contains(LOGO)) {
-                model.Logo = Convert.ToInt32(values[LOGO]);
+            if(values.Contains(FILE_NAME)) {
+                model.FileName = Convert.ToString(values[FILE_NAME]);
             }
         }
 

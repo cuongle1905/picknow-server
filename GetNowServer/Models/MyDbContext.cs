@@ -8,18 +8,20 @@ namespace GetNowServer.Models
 {
     public partial class MyDbContext : DbContext
     {
-
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
         }
 
         public virtual DbSet<Company> Companies { get; set; }
+        public virtual DbSet<CompanyLogo> CompanyLogos { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<District> Districts { get; set; }
         public virtual DbSet<Driver> Drivers { get; set; }
+        public virtual DbSet<ImageInfo> ImageInfos { get; set; }
         public virtual DbSet<Province> Provinces { get; set; }
         public virtual DbSet<Store> Stores { get; set; }
+        public virtual DbSet<StringObject> StringObjects { get; set; }
         public virtual DbSet<Ward> Wards { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -39,6 +41,8 @@ namespace GetNowServer.Models
             {
                 entity.ToTable("company");
 
+                entity.HasIndex(e => e.Logo, "fk_company_logo_idx");
+
                 entity.HasIndex(e => e.Name, "name_UNIQUE")
                     .IsUnique();
 
@@ -50,9 +54,7 @@ namespace GetNowServer.Models
                     .HasMaxLength(100)
                     .HasColumnName("email");
 
-                entity.Property(e => e.Logo)
-                    .HasMaxLength(100)
-                    .HasColumnName("logo");
+                entity.Property(e => e.Logo).HasColumnName("logo");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -72,6 +74,26 @@ namespace GetNowServer.Models
                 entity.Property(e => e.TaxCode)
                     .HasMaxLength(20)
                     .HasColumnName("tax_code");
+
+                entity.HasOne(d => d.LogoNavigation)
+                    .WithMany(p => p.Companies)
+                    .HasForeignKey(d => d.Logo)
+                    .HasConstraintName("fk_company_logo");
+            });
+
+            modelBuilder.Entity<CompanyLogo>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("company_logo");
+
+                entity.Property(e => e.CompanyId).HasColumnName("company_id");
+
+                entity.Property(e => e.FileName)
+                    .HasMaxLength(45)
+                    .HasColumnName("file_name");
+
+                entity.Property(e => e.Logo).HasColumnName("logo");
             });
 
             modelBuilder.Entity<Country>(entity =>
@@ -179,6 +201,19 @@ namespace GetNowServer.Models
                 entity.Property(e => e.Ward).HasColumnName("ward");
             });
 
+            modelBuilder.Entity<ImageInfo>(entity =>
+            {
+                entity.ToTable("image_info");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.FileName)
+                    .HasMaxLength(45)
+                    .HasColumnName("file_name");
+            });
+
             modelBuilder.Entity<Province>(entity =>
             {
                 entity.ToTable("province");
@@ -283,6 +318,17 @@ namespace GetNowServer.Models
                     .HasForeignKey(d => d.Ward)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_store_ward");
+            });
+
+            modelBuilder.Entity<StringObject>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("string_object");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(1000)
+                    .HasColumnName("id");
             });
 
             modelBuilder.Entity<Ward>(entity =>

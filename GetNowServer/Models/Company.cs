@@ -18,8 +18,9 @@ namespace GetNowServer.Models
         public string Phone2 { get; set; }
         public string Email { get; set; }
         public string TaxCode { get; set; }
-        public string Logo { get; set; }
+        public int? Logo { get; set; }
 
+        public virtual ImageInfo LogoNavigation { get; set; }
         public virtual ICollection<Store> Stores { get; set; }
     }
 }

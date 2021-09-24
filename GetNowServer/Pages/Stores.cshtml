@@ -10,7 +10,7 @@
         type: "GET",
         success: function (data) {
             provinces = data["data"];
-            $("#my-div").append("<br/>Received provinces: ");
+            console.log("Received provinces: ");
             $("#my-div").append(provinces[0]["Name"]);
         }
     });
@@ -21,7 +21,7 @@
         type: "GET",
         success: function (data) {
             districts = data["data"];
-            $("#my-div").append("<br/>Received districts: ");
+            console.log("Received districts: ");
             $("#my-div").append(districts[0]["Name"]);
         }
     });
@@ -32,7 +32,7 @@
         type: "GET",
         success: function (data) {
             wards = data["data"];
-            $("#my-div").append("<br/>Received wards: ");
+            console.log("Received wards: ");
             $("#my-div").append(wards[0]["Name"]);
         }
     });
@@ -43,7 +43,7 @@
         type: "GET",
         success: function (data) {
             companies = data["data"];
-            $("#my-div").append("<br/>Received companies: ");
+            console.log("Received companies: ");
             $("#my-div").append(companies[0]["Name"]);
         }
     });
@@ -73,6 +73,7 @@
         </text>);
 
         columns.AddFor(m => m.Province)
+            .CssClass("col-1")
             .SetCellValue("setProvince")
             .Lookup(lookup => lookup
                 //.DataSource(ds => ds.WebApi().Controller("Stores").LoadAction("ProvincesLookup").Key("Value"))
@@ -172,8 +173,6 @@
         }
     </text>)
 )
-<div><br /><button type="button" onclick="$('#my-div').empty();">Clear</button></div>
-<div id="my-div"></div>
 <script>
 
     function onEditorPreparing(e) {
@@ -186,7 +185,7 @@
     }
     function getProvinces(options) {
         if (provinces == undefined) {
-            $("#my-div").append("<br/>Load provinces from server.");
+            console.log("Load provinces from server.");
             return {
                 store: DevExpress.data.AspNet.createStore({
                     key: "Id",
@@ -196,13 +195,13 @@
                 })
             };
         } else {
-            $("#my-div").append("<br/>Load provinces from client.");
+            console.log("Load provinces from client.");
             return provinces;
         }
     }
     function getDistricts(options) {
         if (districts == undefined) {
-            $("#my-div").append("<br/>Load districts from server.");
+            console.log("Load districts from server.");
             return {
                 store: DevExpress.data.AspNet.createStore({
                     key: "Id",
@@ -213,7 +212,7 @@
                 filter: options.data ? ["Province", "=", options.data.Province] : null
             };
         } else {
-            $("#my-div").append("<br/>Load districts from client.");
+            console.log("Load districts from client.");
             return options.data ? districts.filter(d => d.Province == options.data.Province) : districts;
         }
     }
@@ -223,7 +222,7 @@
     }
     function getWards(options) {
         if (wards == undefined) {
-            $("#my-div").append("<br/>Load wards from server.");
+            console.log("Load wards from server.");
             return {
                 store: DevExpress.data.AspNet.createStore({
                     key: "Id",
@@ -234,7 +233,7 @@
                 filter: options.data ? ["District", "=", options.data.District] : null*/
             };
         } else {
-            $("#my-div").append("<br/>Load wards from client.");
+            console.log("Load wards from client.");
             return options.data ? wards.filter(w => w.District == options.data.District) : wards;
         }
     }
@@ -244,7 +243,7 @@
     }
     function getCompanies(options) {
         if (companies == undefined) {
-            $("#my-div").append("<br/>Load companies from server.");
+            console.log("Load companies from server.");
             return {
                 store: DevExpress.data.AspNet.createStore({
                     key: "Id",
@@ -254,7 +253,7 @@
                 })
             };
         } else {
-            $("#my-div").append("<br/>Load companies from client.");
+            console.log("Load companies from client.");
             return companies
         }
     }
