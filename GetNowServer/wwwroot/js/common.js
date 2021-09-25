@@ -33,3 +33,25 @@ function filterTextVN(filterValue, selectedFilterOperation, columnName) {
 function getConvertedTextForColumn(rowData) {
     return nonAccentVietnamese(rowData[columnNameForConvertedText]);
 }
+
+function getDataSource(dataSource, category, url, filterAttribute, optionsData) {
+    console.log("getDataSource.");
+    if (dataSource[category] == undefined) {
+        console.log("Load " + category + " from server.");
+        return {
+            store: DevExpress.data.AspNet.createStore({
+                key: "Id",
+                loadMode: "raw",
+                cacheRawData: true,
+                loadUrl: url,
+                onLoaded: function (result) {
+                    console.log("Receive " + category + " from server: " + result.length);
+                    dataSource[category] = result;
+                }
+            })
+        };
+    } else {
+        console.log("Load " + category + " from client.");
+        return optionsData ? dataSource[category].filter(d => d[filterAttribute] == optionsData[filterAttribute]) : dataSource[category];
+    }
+}
