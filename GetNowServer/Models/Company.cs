@@ -7,11 +7,6 @@ namespace GetNowServer.Models
 {
     public partial class Company
     {
-        public Company()
-        {
-            Stores = new HashSet<Store>();
-        }
-
         public int Id { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
@@ -21,6 +16,5 @@ namespace GetNowServer.Models
         public int? Logo { get; set; }
 
         public virtual ImageInfo LogoNavigation { get; set; }
-        public virtual ICollection<Store> Stores { get; set; }
     }
 }
