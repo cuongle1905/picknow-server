@@ -49,6 +49,14 @@ namespace GetNowServer.Controllers
             if(!TryValidateModel(model))
                 return BadRequest(GetFullErrorMessage(ModelState));
 
+            try
+            {
+                model.Id = _context.StoreProductGroups.Max(x => x.Id) + 1;
+            }
+            catch
+            {
+                model.Id = 1;
+            }
             var result = _context.StoreProductGroups.Add(model);
             await _context.SaveChangesAsync();
 

@@ -113,15 +113,7 @@
                 });
         }))
     )
-    .OnInitNewRow(@<text>
-        function(e) {
-            e.component.option("editing.popup.title", "Create New Store Product Group");
-            e.data.StoreGroup = storeGroupId;
-            console.log("OnInitNewRow " + storeProductGroups[0]["Name"]);
-            e.component.columnOption('StoreGroup', 'lookup.dataSource', storeProductGroups);
-            setPopupIdVisible(e, false);
-        }
-    </text>)
+    .OnInitNewRow("onInitNewRow")
     .OnEditingStart("onEditingStart")
 //.Selection(s => s.Mode(SelectionMode.Single))
 //.FilterMode(TreeListFilterMode.FullBranch)
@@ -138,16 +130,6 @@
 
     var optionsData;
     var storeProductGroups = [];
-    var storeProductGroupDataSource = new DevExpress.data.ArrayStore({
-        key: "id",
-        data: []
-    });
-    function getStoreProductGroups() {
-        //optionsData = { "StoreGroup": storeGroupId };
-        //return getDataSource(myDataSource, "StoreProductGroups", '@Url.Action("Get", "StoreProductGroups")', "StoreGroup", optionsData);
-        console.log("getStoreProductGroups");
-        return storeProductGroupDataSource; //storeProductGroups.filter(s => s["StoreGroup"] == storeGroupId);
-    }
     function getStoreGroups() {
         return getDataSource(myDataSource, "StoreGroups", '@Url.Action("Get", "StoreGroups")');
     }
@@ -172,10 +154,16 @@
     function treeDataLoaded(result) {
         storeProductGroups = result;
         console.log("treeDataLoaded " + result[0]["Name"]);
-        //storeProductGroupDataSource.data = storeProductGroups;
+    }
+    function onInitNewRow(e) {
+        console.log("onInitNewRow " + storeProductGroups[0]["Name"]);
+        e.component.option("editing.popup.title", "Create New Store Product Group");
+        e.data.StoreGroup = storeGroupId;
+        e.component.columnOption('Parent', 'lookup.dataSource', storeProductGroups);
+        setPopupIdVisible(e, false);
     }
     function onEditingStart(e) {
-        console.log("OnEditingStart " + storeProductGroups[0]["Name"]);
+        console.log("onEditingStart " + storeProductGroups[0]["Name"]);
         e.component.option("editing.popup.title", "Update Store Product Group: " + e.data.Name);
         var parents = storeProductGroups.filter(d => d.Id != e.data.Id);
         e.component.columnOption('Parent', 'lookup.dataSource', parents);
