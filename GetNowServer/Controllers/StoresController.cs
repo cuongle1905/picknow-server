@@ -32,7 +32,7 @@ namespace GetNowServer.Controllers
                 i.District,
                 i.Ward,
                 i.Address,
-                i.Company,
+                i.StoreGroup,
                 i.ContactName,
                 i.ContactPhone,
                 i.ContactPhone2,
@@ -139,7 +139,7 @@ namespace GetNowServer.Controllers
             string DISTRICT = nameof(Store.District);
             string WARD = nameof(Store.Ward);
             string ADDRESS = nameof(Store.Address);
-            string COMPANY = nameof(Store.Company);
+            string STORE_GROUP = nameof(Store.StoreGroup);
             string CONTACT_NAME = nameof(Store.ContactName);
             string CONTACT_PHONE = nameof(Store.ContactPhone);
             string CONTACT_PHONE2 = nameof(Store.ContactPhone2);
@@ -169,8 +169,8 @@ namespace GetNowServer.Controllers
                 model.Address = Convert.ToString(values[ADDRESS]);
             }
 
-            if(values.Contains(COMPANY)) {
-                model.Company = values[COMPANY] != null ? Convert.ToInt32(values[COMPANY]) : (int?)null;
+            if(values.Contains(STORE_GROUP)) {
+                model.StoreGroup = Convert.ToInt32(values[STORE_GROUP]);
             }
 
             if(values.Contains(CONTACT_NAME)) {

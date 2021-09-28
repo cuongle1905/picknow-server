@@ -59,7 +59,7 @@
     .RemoteOperations(true)
     .Columns(columns => {
 
-        columns.AddFor(m => m.Id).Alignment(HorizontalAlignment.Center).CssClass("col-1");
+        columns.AddFor(m => m.Id).Alignment(HorizontalAlignment.Center).Width("10%");
 
         columns.AddFor(m => m.Name).CalculateFilterExpression(@<text>
             function (filterValue, selectedFilterOperation, target) {
@@ -80,13 +80,13 @@
             .AllowFiltering(false)
             .AllowSorting(false)
             .AllowEditing(false)
-            .CssClass("col-1")
+            .Width("15%")
             .CellTemplate(@<text>
                 @(await Html.PartialAsync("_IconCellTemplate"))
             </text>);
     })
     .Editing(e => e
-        .Mode(GridEditMode.Popup)
+        //.Mode(GridEditMode.Popup)
         .AllowAdding(true)
         .AllowUpdating(true)
         .AllowDeleting(true)

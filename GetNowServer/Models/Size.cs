@@ -14,6 +14,8 @@ namespace GetNowServer.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public double? Weight { get; set; }
+        public double? Volumn { get; set; }
 
         public virtual ICollection<Product> Products { get; set; }
     }

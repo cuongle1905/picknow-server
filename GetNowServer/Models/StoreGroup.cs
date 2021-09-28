@@ -14,7 +14,9 @@ namespace GetNowServer.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
+        public int? Company { get; set; }
 
+        public virtual Company CompanyNavigation { get; set; }
         public virtual ICollection<Store> Stores { get; set; }
     }
 }

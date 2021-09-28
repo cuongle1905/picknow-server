@@ -424,6 +424,10 @@ namespace GetNowServer.Models
                     .HasColumnName("name")
                     .UseCollation("utf8_bin")
                     .HasCharSet("utf8");
+
+                entity.Property(e => e.Volumn).HasColumnName("volumn");
+
+                entity.Property(e => e.Weight).HasColumnName("weight");
             });
 
             modelBuilder.Entity<Store>(entity =>
@@ -511,6 +515,8 @@ namespace GetNowServer.Models
             {
                 entity.ToTable("store_group");
 
+                entity.HasIndex(e => e.Company, "fk_store_group_company_idx");
+
                 entity.HasIndex(e => e.Name, "uniq_store_group_name")
                     .IsUnique();
 
@@ -518,12 +524,19 @@ namespace GetNowServer.Models
                     .ValueGeneratedNever()
                     .HasColumnName("id");
 
+                entity.Property(e => e.Company).HasColumnName("company");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(45)
                     .HasColumnName("name")
                     .UseCollation("utf8_bin")
                     .HasCharSet("utf8");
+
+                entity.HasOne(d => d.CompanyNavigation)
+                    .WithMany(p => p.StoreGroups)
+                    .HasForeignKey(d => d.Company)
+                    .HasConstraintName("fk_store_group_company");
             });
 
             modelBuilder.Entity<StoreProduct>(entity =>
@@ -613,12 +626,6 @@ namespace GetNowServer.Models
                     .HasColumnName("name")
                     .UseCollation("utf8_bin")
                     .HasCharSet("utf8");
-
-                entity.Property(e => e.ShortUnit).HasColumnName("short_unit");
-
-                entity.Property(e => e.Volumn).HasColumnName("volumn");
-
-                entity.Property(e => e.Weight).HasColumnName("weight");
             });
 
             modelBuilder.Entity<Ward>(entity =>

@@ -1,4 +1,240 @@
 ﻿@page
 @model GetNowServer.Pages.StoreProductGroupsModel
-@{
-}
+<style type="text/css">
+    .container,
+    .container-fluid,
+    .container-sm,
+    .container-md,
+    .container-lg,
+    .container-xl {
+        width: 50%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+    .dx-lookup-search-wrapper {
+        padding: 8px 8px 1px;
+    }
+    .dx-list .dx-empty-message, .dx-list-item-content {
+        padding: 6px;
+    }
+    .dx-lookup-popup-search .dx-list {
+        height: 100%;
+        height: calc(100% - 10px);
+    }
+    .dx-popup-bottom.dx-toolbar {
+        padding: 12px;
+        overflow: visible;
+    }
+</style>
+<h2 class="content-block">Store Product Groups</h2>
+<script>
+    selectedMenuItemId = "#ni-storeproductgroups"
+    var myDataSource = {};
+    var storeGroupId = 1;
+</script>
+<div class="dx-fieldset">
+    <div class="dx-fieldset-header">Store Group</div>
+    <div class="dx-field">
+        @(Html.DevExtreme().Lookup()
+            .ID("lookup1")
+            //.Width("50%")
+            .DataSource(new JS("getStoreGroups()"))
+            .DropDownOptions(p => p.ShowTitle(false))
+            .ValueExpr("Id")
+            .DisplayExpr("Name")
+            .Value(1)
+            .OnValueChanged("lookup_valueChanged")
+        )
+    </div>
+</div>
+
+@(Html.DevExtreme().TreeList<GetNowServer.Models.StoreProductGroup>()
+    //.Width("50%")
+    .ID("treeList1")
+    .ShowBorders(true)
+    .ShowRowLines(true)
+    //.HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .DataSource(ds => ds.Mvc()
+        .Controller("StoreProductGroups")
+        .LoadAction("Get")
+        .InsertAction("Post")
+        .UpdateAction("Put")
+        .DeleteAction("Delete")
+        .Key("Id")
+        .OnLoaded("treeDataLoaded")
+    )
+    //.RowDragging(rd => rd
+    //    .AllowDropInsideItem(true)
+    //    //.AllowReordering(true)
+    //    .OnDragChange("onDragChange")
+    //    .OnReorder("onReorder")
+    //    .ShowDragIcons(true)
+    //)
+    //.RootValue(0)
+    .ParentIdExpr("Parent")
+    //.RemoteOperations(o => o.Filtering(true).Grouping(true).Sorting(true))
+    .Columns(columns => {
+        columns.AddFor(m => m.Name).Alignment(HorizontalAlignment.Left);
+        columns.AddFor(m => m.Id).Visible(false);
+        columns.AddFor(m => m.Parent).Visible(false);
+        columns.AddFor(m => m.StoreGroup).Visible(false);
+        //columns.AddFor(m => m.Id).Width("20%");
+    })
+    .Editing(e => e
+        .AllowAdding(true)
+        .AllowUpdating(true)
+        .AllowDeleting(true)
+        .Mode(GridEditMode.Popup)
+        .Popup(p => p
+            .Title("Store Product Group")
+            .ShowTitle(true)
+            .Width(500)
+            .Height(300)
+            .Animation(a => a.Show(ac => ac.Duration(0)))
+        )
+        .Form(f => f.Items(items =>
+        {
+            items.AddGroup()
+                .ColCount(1)
+                .ColSpan(2)
+                .Items(groupItems =>
+                {
+                    groupItems.AddSimpleFor(m => m.Parent)
+                        .Editor(e => e
+                            .Lookup()
+                            .DropDownOptions(p => p.ShowTitle(false))
+                            .ValueExpr("Id")
+                            .DisplayExpr("Name")
+                        );
+                    groupItems.AddSimpleFor(m => m.Id);
+                    groupItems.AddSimpleFor(m => m.Name);
+                });
+        }))
+    )
+    .OnInitNewRow(@<text>
+        function(e) {
+            e.component.option("editing.popup.title", "Create New Store Product Group");
+            e.data.StoreGroup = storeGroupId;
+            console.log("OnInitNewRow " + storeProductGroups[0]["Name"]);
+            e.component.columnOption('StoreGroup', 'lookup.dataSource', storeProductGroups);
+            setPopupIdVisible(e, false);
+        }
+    </text>)
+    .OnEditingStart("onEditingStart")
+//.Selection(s => s.Mode(SelectionMode.Single))
+//.FilterMode(TreeListFilterMode.FullBranch)
+)
+
+<script>
+    @*var storeGroups = [];
+    $(function () {
+        $.get('@Url.Action("Get", "StoreGroups")', function(data) {
+            storeGroups = data.data;
+            console.log(storeGroups[0]["Name"]);
+        });
+    });*@
+
+    var optionsData;
+    var storeProductGroups = [];
+    var storeProductGroupDataSource = new DevExpress.data.ArrayStore({
+        key: "id",
+        data: []
+    });
+    function getStoreProductGroups() {
+        //optionsData = { "StoreGroup": storeGroupId };
+        //return getDataSource(myDataSource, "StoreProductGroups", '@Url.Action("Get", "StoreProductGroups")', "StoreGroup", optionsData);
+        console.log("getStoreProductGroups");
+        return storeProductGroupDataSource; //storeProductGroups.filter(s => s["StoreGroup"] == storeGroupId);
+    }
+    function getStoreGroups() {
+        return getDataSource(myDataSource, "StoreGroups", '@Url.Action("Get", "StoreGroups")');
+    }
+    function lookup_valueChanged(e) {
+        if (storeGroupId != e.value) {
+            console.log("Store Group selected: " + e.value);
+            storeGroupId = e.value;
+            updateTreeFilter().reload();
+        }
+    }
+    function updateTreeFilter() {
+        var dataSource = $("#treeList1").dxTreeList("getDataSource");
+        var filter = [['StoreGroup', '=', storeGroupId]];
+        dataSource.filter(filter);
+        return dataSource;
+    }
+    function setPopupIdVisible(e, visible) {
+        const formItemConfig = e.component.columnOption('Id') || {}
+        formItemConfig.visible = visible;
+        e.component.columnOption('Id', 'formItem', formItemConfig);
+    }
+    function treeDataLoaded(result) {
+        storeProductGroups = result;
+        console.log("treeDataLoaded " + result[0]["Name"]);
+        //storeProductGroupDataSource.data = storeProductGroups;
+    }
+    function onEditingStart(e) {
+        console.log("OnEditingStart " + storeProductGroups[0]["Name"]);
+        e.component.option("editing.popup.title", "Update Store Product Group: " + e.data.Name);
+        var parents = storeProductGroups.filter(d => d.Id != e.data.Id);
+        e.component.columnOption('Parent', 'lookup.dataSource', parents);
+        setPopupIdVisible(e, true);
+    }
+    //function refreshStoreGroupData() {
+    //    console.log("refreshStoreGroupData");
+    //    var lookupDataSource = $("#lookup1").dxLookup("getDataSource");
+    //    lookupDataSource.reloadData();
+    //}
+</script>
+
+@*<script>
+        function onDragChange(e) {
+            var treeList = e.component,
+                visibleRows = treeList.getVisibleRows(),
+                sourceNode = treeList.getNodeByKey(e.itemData.Id),
+                targetNode = visibleRows[e.toIndex].node;
+
+            while (targetNode && targetNode.data) {
+                if (targetNode.data.Id === sourceNode.data.Id) {
+                    e.cancel = true;
+                    break;
+                }
+                targetNode = targetNode.parent;
+            }
+        }
+
+        function onReorder(e) {
+            var visibleRows = e.component.getVisibleRows();
+
+            if (e.dropInsideItem) {
+                e.itemData.Head_ID = visibleRows[e.toIndex].key;
+                console.log("onReorder dropInsideItem " + e.itemData.Id + " -> " + e.itemData.Head_ID)
+            } else {
+                var sourceData = e.itemData,
+                    toIndex = e.fromIndex > e.toIndex ? e.toIndex - 1 : e.toIndex,
+                    targetData = toIndex >= 0 ? visibleRows[toIndex].node.data : null;
+
+                if (targetData && e.component.isRowExpanded(targetData.Id)) {
+                    sourceData.Head_ID = targetData.Id;
+                    targetData = null;
+                } else {
+                    sourceData.Head_ID = targetData ? targetData.Head_ID : e.component.option('rootValue');
+                }
+                console.log("onReorder !dropInsideItem " + e.itemData.Id + " -> " + e.itemData.Head_ID)
+
+                var storeProductGroups = getStoreProductGroups()
+                var sourceIndex = storeProductGroups.indexOf(sourceData);
+                storeProductGroups.splice(sourceIndex, 1);
+
+                var targetIndex = storeProductGroups.indexOf(targetData) + 1;
+                storeProductGroups.splice(targetIndex, 0, sourceData);
+            }
+
+            e.component.refresh();
+        }
+
+        function getTreeList() {
+            return $("#treeList").dxTreeList("instance");
+        }
+    </script>*@
