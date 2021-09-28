@@ -13,19 +13,37 @@
         margin-right: auto;
         margin-left: auto;
     }
+    .dx-lookup-search .dx-texteditor-input {
+        margin: 0;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        min-height: 30px;
+    }
     .dx-lookup-search-wrapper {
-        padding: 8px 8px 1px;
+        padding: 8px 8px 4px;
     }
     .dx-list .dx-empty-message, .dx-list-item-content {
         padding: 6px;
     }
     .dx-lookup-popup-search .dx-list {
         height: 100%;
-        height: calc(100% - 10px);
+        height: calc(100% - 44px);
     }
     .dx-popup-bottom.dx-toolbar {
-        padding: 12px;
+        padding: 4px 16px 12px;
         overflow: visible;
+    }
+    .dx-popup-cancel .dx-button-content {
+        padding: 5px 8px 6px;
+    }
+    .dx-popup-bottom .dx-button {
+        min-width: 80px;
+    }
+    .label1 {
+        width: 100px;
+    }
+    .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+        width: calc(100% - 100px);
     }
 </style>
 <h2 class="content-block">Store Product Groups</h2>
@@ -34,27 +52,30 @@
     var myDataSource = {};
     var storeGroupId = 1;
 </script>
-<div class="dx-fieldset">
-    <div class="dx-fieldset-header">Store Group</div>
     <div class="dx-field">
-        @(Html.DevExtreme().Lookup()
-            .ID("lookup1")
-            //.Width("50%")
-            .DataSource(new JS("getStoreGroups()"))
-            .DropDownOptions(p => p.ShowTitle(false))
-            .ValueExpr("Id")
-            .DisplayExpr("Name")
-            .Value(1)
-            .OnValueChanged("lookup_valueChanged")
-        )
+        <div class="label1 dx-field-label">Store Group:</div>
+        <div class="dx-field-value">
+            @(Html.DevExtreme().Lookup()
+                .ID("lookup1")
+                //.Width("50%")
+                .DataSource(new JS("getStoreGroups()"))
+                .DropDownOptions(p => p.ShowTitle(false).CloseOnOutsideClick(true))
+                .ValueExpr("Id")
+                .DisplayExpr("Name")
+                .Value(1)
+                .OnValueChanged("lookup_valueChanged")
+                .ShowCancelButton(false)
+                .SearchExpr(new string[] { "Name", "NameSearch" })
+            )
+        </div>
     </div>
-</div>
 
 @(Html.DevExtreme().TreeList<GetNowServer.Models.StoreProductGroup>()
     //.Width("50%")
     .ID("treeList1")
     .ShowBorders(true)
     .ShowRowLines(true)
+    .ShowColumnHeaders(false)
     //.HeaderFilter(headerFilter => headerFilter.Visible(true))
     .DataSource(ds => ds.Mvc()
         .Controller("StoreProductGroups")
@@ -75,7 +96,8 @@
     //.RootValue(0)
     .ParentIdExpr("Parent")
     //.RemoteOperations(o => o.Filtering(true).Grouping(true).Sorting(true))
-    .Columns(columns => {
+    .Columns(columns =>
+    {
         columns.AddFor(m => m.Name).Alignment(HorizontalAlignment.Left);
         columns.AddFor(m => m.Id).Visible(false);
         columns.AddFor(m => m.Parent).Visible(false);
@@ -93,8 +115,9 @@
             .Width(500)
             .Height(300)
             .Animation(a => a.Show(ac => ac.Duration(0)))
+            .OnShown("onShowEditPopup")
         )
-        .Form(f => f.Items(items =>
+        .Form(f => f.ID("editForm1").Items(items =>
         {
             items.AddGroup()
                 .ColCount(1)
@@ -104,17 +127,20 @@
                     groupItems.AddSimpleFor(m => m.Parent)
                         .Editor(e => e
                             .Lookup()
-                            .DropDownOptions(p => p.ShowTitle(false))
+                            .DropDownOptions(p => p.ShowTitle(false).CloseOnOutsideClick(true))
                             .ValueExpr("Id")
                             .DisplayExpr("Name")
+                            .ShowCancelButton(false)
+                            .SearchExpr(new string[] { "Name", "NameSearch" })
                         );
                     groupItems.AddSimpleFor(m => m.Id);
-                    groupItems.AddSimpleFor(m => m.Name);
+                    groupItems.AddSimpleFor(m => m.Name).Editor(e => e.TextBox().ID("nameTextBox1"));
                 });
         }))
     )
     .OnInitNewRow("onInitNewRow")
     .OnEditingStart("onEditingStart")
+//.OnEditorPreparing("onEditorPreparing")
 //.Selection(s => s.Mode(SelectionMode.Single))
 //.FilterMode(TreeListFilterMode.FullBranch)
 )
@@ -152,8 +178,9 @@
         e.component.columnOption('Id', 'formItem', formItemConfig);
     }
     function treeDataLoaded(result) {
-        storeProductGroups = result;
-        console.log("treeDataLoaded " + result[0]["Name"]);
+        storeProductGroups = result.filter(d => d.StoreGroup == storeGroupId);
+        addNameSearchColumn(storeProductGroups);
+        console.log("treeDataLoaded " + storeProductGroups.length);
     }
     function onInitNewRow(e) {
         console.log("onInitNewRow " + storeProductGroups[0]["Name"]);
@@ -169,6 +196,15 @@
         e.component.columnOption('Parent', 'lookup.dataSource', parents);
         setPopupIdVisible(e, true);
     }
+    function onShowEditPopup(e) {
+        console.log("onShowEditPopup");
+        $("#nameTextBox1").find("input").focus();
+    }
+    //function onEditorPreparing(e) {
+    //    if (e.dataField == "Parent") {
+    //        e.editorOptions.closeOnOutsideClick = true;
+    //    }
+    //}
     //function refreshStoreGroupData() {
     //    console.log("refreshStoreGroupData");
     //    var lookupDataSource = $("#lookup1").dxLookup("getDataSource");

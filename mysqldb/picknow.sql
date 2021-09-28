@@ -285,7 +285,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'Bột yến mạch nếp cẩm Coop Select 450g',23,NULL,2,1,NULL,NULL,NULL),(2,'Yến mạch nguyên hạt Coop Select 400g',24,NULL,2,1,NULL,NULL,NULL),(3,'Bánh Chocopie Orion hộp 396g',11,NULL,4,1,NULL,NULL,NULL),(4,'Bánh xốp Nabati Richeese hộp 20×7,5g',11,NULL,6,1,NULL,NULL,NULL),(5,'Bánh Chocopie Orion Cacao hộp 360g',11,NULL,4,1,NULL,NULL,NULL),(6,'Bánh Quy Bơ Danisa hộp thiếc 200g',11,NULL,7,1,NULL,NULL,NULL),(7,'Bánh mè giòn Goute Orion hộp 288g',11,NULL,8,1,NULL,NULL,NULL),(8,'Mực rim me Coop Select 100g',28,NULL,2,1,NULL,NULL,NULL),(9,'Dầu ăn Tường An Cooking Nutri Plus chai 1L',25,NULL,9,1,NULL,NULL,NULL),(10,'Dầu ăn Tường An chai 1L',25,NULL,9,1,NULL,NULL,NULL),(11,'Nước mắm Nam Ngư 3in1 chai 750ml',19,NULL,10,1,NULL,NULL,NULL),(12,'Nước mắm Nam Ngư 3in1 chai 900ml',20,NULL,10,1,NULL,NULL,NULL),(13,'Nước mắm cao cấp Liên Thành nhãn bạc chai thủy tinh 40 độ đạm 600ml',21,NULL,11,1,NULL,NULL,NULL),(14,'Nước mắm Liên Thành nhãn đồng 25 độ đạm chai thủy tinh 600ml',21,NULL,11,1,NULL,NULL,NULL),(15,'Trứng Gà Ba Huân vỉ 10 trứng',22,NULL,12,1,NULL,NULL,NULL),(16,'Trứng vịt Ba Huân vỉ 10 trứng',22,NULL,12,1,NULL,NULL,NULL),(17,'Cá rô làm sạch',2,NULL,NULL,1,NULL,NULL,NULL),(18,'Cá lóc cắt lát gói 300g',30,NULL,NULL,1,NULL,NULL,NULL),(19,'Nước giặt OMO Matic Comfort Tinh dầu thơm túi 3.7kg',31,NULL,14,1,NULL,NULL,NULL),(20,'Nước giặt Ariel Matic cửa trước tươi mát túi 1.85kg',32,NULL,16,1,NULL,NULL,NULL),(21,'Nước rửa tay Lifebuoy bảo vệ vượt trội diệt khuẩn chai 500g',33,NULL,17,1,NULL,NULL,NULL);
+INSERT INTO `product` VALUES (1,'Bột yến mạch nếp cẩm Coop Select 450g',11,NULL,2,1,3,NULL,NULL),(2,'Yến mạch nguyên hạt Coop Select 400g',11,NULL,2,1,4,NULL,NULL),(3,'Bánh Chocopie Orion hộp 396g',14,NULL,4,1,5,NULL,NULL),(4,'Bánh xốp Nabati Richeese hộp 20×7,5g',14,NULL,6,1,6,NULL,NULL),(5,'Bánh Chocopie Orion Cacao hộp 360g',14,NULL,4,1,7,NULL,NULL),(6,'Bánh Quy Bơ Danisa hộp thiếc 200g',14,NULL,7,1,8,NULL,NULL),(7,'Bánh mè giòn Goute Orion hộp 288g',14,NULL,8,1,9,NULL,NULL),(8,'Mực rim me Coop Select 100g',19,NULL,2,1,10,NULL,NULL),(9,'Dầu ăn Tường An Cooking Nutri Plus chai 1L',12,NULL,9,1,2,NULL,NULL),(10,'Dầu ăn Tường An chai 1L',12,NULL,9,1,2,NULL,NULL),(11,'Nước mắm Nam Ngư 3in1 chai 750ml',12,NULL,10,1,11,NULL,NULL),(12,'Nước mắm Nam Ngư 3in1 chai 900ml',12,NULL,10,1,12,NULL,NULL),(13,'Nước mắm cao cấp Liên Thành nhãn bạc chai thủy tinh 40 độ đạm 600ml',12,NULL,11,1,13,NULL,NULL),(14,'Nước mắm Liên Thành nhãn đồng 25 độ đạm chai thủy tinh 600ml',12,NULL,11,1,13,NULL,NULL),(15,'Trứng Gà Ba Huân vỉ 10 trứng',18,NULL,12,1,14,NULL,NULL),(16,'Trứng vịt Ba Huân vỉ 10 trứng',18,NULL,12,1,14,NULL,NULL),(17,'Cá rô làm sạch',2,NULL,NULL,1,NULL,NULL,NULL),(18,'Cá lóc cắt lát gói 300g',11,NULL,NULL,1,15,NULL,NULL),(19,'Nước giặt OMO Matic Comfort Tinh dầu thơm túi 3.7kg',13,NULL,14,1,16,NULL,NULL),(20,'Nước giặt Ariel Matic cửa trước tươi mát túi 1.85kg',13,NULL,16,1,17,NULL,NULL),(21,'Nước rửa tay Lifebuoy bảo vệ vượt trội diệt khuẩn chai 500g',12,NULL,17,1,18,NULL,NULL);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -352,6 +352,8 @@ DROP TABLE IF EXISTS `size`;
 CREATE TABLE `size` (
   `id` int NOT NULL,
   `name` varchar(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `weight` double DEFAULT NULL,
+  `volumn` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_size_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -363,6 +365,7 @@ CREATE TABLE `size` (
 
 LOCK TABLES `size` WRITE;
 /*!40000 ALTER TABLE `size` DISABLE KEYS */;
+INSERT INTO `size` VALUES (1,'1kg',1,NULL),(2,'1L',NULL,1),(3,'450g',0.45,NULL),(4,'400g',0.4,NULL),(5,'396g',0.396,NULL),(6,'20×7.5g',0.15,NULL),(7,'360g',0.36,NULL),(8,'200g',0.2,NULL),(9,'288g',0.288,NULL),(10,'100g',0.1,NULL),(11,'750ml',NULL,0.75),(12,'900ml',NULL,0.9),(13,'600ml',NULL,0.6),(14,'10 trứng',NULL,NULL),(15,'300g',0.3,NULL),(16,'3.7kg',3.7,NULL),(17,'1.85kg',1.85,NULL),(18,'500g',0.5,NULL);
 /*!40000 ALTER TABLE `size` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -417,8 +420,11 @@ DROP TABLE IF EXISTS `store_group`;
 CREATE TABLE `store_group` (
   `id` int NOT NULL,
   `name` varchar(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `company` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_store_group_name` (`name`)
+  UNIQUE KEY `uniq_store_group_name` (`name`),
+  KEY `fk_store_group_company_idx` (`company`),
+  CONSTRAINT `fk_store_group_company` FOREIGN KEY (`company`) REFERENCES `company` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -428,7 +434,7 @@ CREATE TABLE `store_group` (
 
 LOCK TABLES `store_group` WRITE;
 /*!40000 ALTER TABLE `store_group` DISABLE KEYS */;
-INSERT INTO `store_group` VALUES (4,'CircleK'),(1,'CoopMart'),(2,'CoopSmile'),(3,'FamiliyMart');
+INSERT INTO `store_group` VALUES (1,'CoopMart',1),(2,'CoopSmile',1),(3,'FamiliyMart',2),(4,'CircleK',3);
 /*!40000 ALTER TABLE `store_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -470,7 +476,7 @@ DROP TABLE IF EXISTS `store_product_group`;
 CREATE TABLE `store_product_group` (
   `id` int NOT NULL,
   `store_group` int NOT NULL,
-  `name` varchar(100) NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `parent` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -482,7 +488,7 @@ CREATE TABLE `store_product_group` (
 
 LOCK TABLES `store_product_group` WRITE;
 /*!40000 ALTER TABLE `store_product_group` DISABLE KEYS */;
-INSERT INTO `store_product_group` VALUES (1,1,'Công nghệ',NULL),(2,1,'Đồ dùng',NULL),(3,1,'Hóa mỹ phẩm',NULL),(4,1,'May mặc',NULL),(5,1,'Tươi sống',NULL),(6,1,'Bánh kẹo',1),(7,1,'Dầu ăn - nước chấm',1),(8,1,'Đông lạnh',1),(9,1,'Gia vị - hạt nêm',1),(10,1,'Mì - bún - cháo - nui',1),(11,1,'Nước uống - rượu bia',1),(12,1,'Sản phẩm đóng gói',1),(13,1,'Sữa - bột',1),(14,1,'Dụng cụ',2),(15,1,'Điện',2),(16,1,'Gia đình',2),(17,1,'Nhà bếp',2),(18,1,'Nhựa',2),(19,1,'Bột giặt - nước xả',3),(20,1,'Chất tẩy rửa',3),(21,1,'Dầu gội -  sữa tắm',3),(22,1,'Đồ em bé',3),(23,1,'Giấy - khăn',3),(24,1,'Mỹ phẩm',3),(25,1,'Vệ sinh cá nhân',3),(26,1,'Đồng phục học sinh',4),(27,1,'Khẩu trang',4),(28,1,'Thời trang nam',4),(29,1,'Thời trang nữ',4),(30,1,'Tổng hợp',4),(31,1,'Bánh mì',5),(32,1,'Gia cầm',5),(33,1,'Hải sản',5),(34,1,'Hoa tươi',5),(35,1,'Rau - củ - quả',5),(36,1,'Thịt - Cá',5),(37,1,'Thực phẩm đóng gói',5),(38,1,'Thực phẩm nấu chín',5),(39,1,'Thực phẩm sơ chế',5),(40,1,'Trái cây',5),(41,1,'Trứng vịt - gà - cút',5),(42,1,'Bánh - snack',6),(43,1,'Dầu ăn - Dầu hào',7),(44,1,'Nước mắm',7),(45,1,'Trứng vịt',41),(46,1,'Cá',36),(47,1,'Nước Giặt',19),(48,1,'Nước - Gel Rửa Tay',25);
+INSERT INTO `store_product_group` VALUES (1,1,'Công nghệ',NULL),(2,1,'Đồ dùng',NULL),(3,1,'Hóa mỹ phẩm',NULL),(4,1,'May mặc',NULL),(5,1,'Tươi sống',NULL),(6,1,'Bánh kẹo',1),(7,1,'Dầu ăn - nước chấm',1),(8,1,'Đông lạnh',1),(9,1,'Gia vị - hạt nêm',1),(10,1,'Mì - bún - cháo - nui',1),(11,1,'Nước uống - rượu bia',1),(12,1,'Sản phẩm đóng gói',1),(13,1,'Sữa - bột',1),(14,1,'Dụng cụ',2),(15,1,'Điện',2),(16,1,'Gia đình',2),(17,1,'Nhà bếp',2),(18,1,'Nhựa',2),(19,1,'Bột giặt - nước xả',3),(20,1,'Chất tẩy rửa',3),(21,1,'Dầu gội -  sữa tắm',3),(22,1,'Đồ em bé',3),(23,1,'Giấy - khăn',3),(24,1,'Mỹ phẩm',3),(25,1,'Vệ sinh cá nhân',3),(26,1,'Đồng phục học sinh',4),(27,1,'Khẩu trang',4),(28,1,'Thời trang nam',4),(29,1,'Thời trang nữ',4),(30,1,'Tổng hợp',4),(31,1,'Bánh mì',5),(32,1,'Gia cầm',5),(33,1,'Hải sản',5),(34,1,'Hoa tươi',5),(35,1,'Rau - củ - quả',5),(36,1,'Thịt - Cá',5),(37,1,'Thực phẩm đóng gói',5),(38,1,'Thực phẩm nấu chín',5),(39,1,'Thực phẩm sơ chế',5),(40,1,'Trái cây',5),(41,1,'Trứng vịt - gà - cút',5),(42,1,'Bánh - snack',6),(43,1,'Dầu ăn - Dầu hào',7),(44,1,'Nước mắm',7),(45,1,'Trứng vịt',41),(46,1,'Cá',36),(47,1,'Nước Giặt',19),(48,1,'Nước - Gel Rửa Tay',25),(49,1,'Dung cu 1',14),(51,2,'Đồ dùng',0),(52,2,'Công nghệ',0),(53,2,'May mặc',0),(54,2,'Đồ điện',51),(55,2,'Thực phẩm',0),(56,2,'Bánh kẹo',55),(57,2,'Áo quần',53),(58,2,'Giày dép',53);
 /*!40000 ALTER TABLE `store_product_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -517,11 +523,8 @@ DROP TABLE IF EXISTS `unit`;
 CREATE TABLE `unit` (
   `id` int NOT NULL,
   `name` varchar(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `short_unit` int DEFAULT NULL,
   `base_unit` tinyint DEFAULT '1',
   `exchange` double DEFAULT '1',
-  `weight` double DEFAULT NULL,
-  `volumn` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_unit_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -533,7 +536,7 @@ CREATE TABLE `unit` (
 
 LOCK TABLES `unit` WRITE;
 /*!40000 ALTER TABLE `unit` DISABLE KEYS */;
-INSERT INTO `unit` VALUES (1,'each',NULL,1,1,NULL,NULL),(2,'kg',NULL,2,1,NULL,NULL),(3,'L',NULL,3,1,NULL,NULL),(4,'m',NULL,4,1,NULL,NULL),(7,'chai',NULL,1,1,NULL,NULL),(8,'gói',NULL,1,1,NULL,NULL),(10,'cái',NULL,1,1,NULL,NULL),(11,'hộp',NULL,1,1,NULL,NULL),(12,'vỉ',NULL,1,1,NULL,NULL),(13,'lốc',NULL,1,1,NULL,NULL),(14,'lọ',NULL,1,1,NULL,NULL),(15,'cuộn',NULL,1,1,NULL,NULL),(16,'cây',NULL,1,1,NULL,NULL),(17,'bịch',NULL,1,1,NULL,NULL),(18,'túi',NULL,1,1,NULL,NULL),(19,'chai 750ml',7,1,1,NULL,0.75),(20,'chai 900ml',7,1,1,NULL,0.9),(21,'chai 600ml',7,1,1,NULL,0.6),(22,'vỉ 10 trứng',12,1,1,NULL,NULL),(23,'gói 450g',8,1,1,0.45,NULL),(24,'gói 400g',8,1,1,0.4,NULL),(25,'chai 1L',7,1,1,NULL,1),(26,'bộ',NULL,1,1,NULL,NULL),(27,'hũ',NULL,1,1,NULL,NULL),(28,'hũ 100g',27,1,1,0.1,NULL),(29,'cuốn',NULL,1,1,NULL,NULL),(30,'gói 300g',8,1,1,0.3,NULL),(31,'túi 3.7kg',18,1,1,3.7,NULL),(32,'túi 1.85kg',18,1,1,1.85,NULL),(33,'chai 500g',7,1,1,0.5,NULL);
+INSERT INTO `unit` VALUES (1,'each',1,1),(2,'kg',2,1),(3,'L',3,1),(4,'m',4,1),(10,'cái',1,1),(11,'gói',1,1),(12,'chai',1,1),(13,'túi',1,1),(14,'hộp',1,1),(15,'cuộn',1,1),(16,'cây',1,1),(17,'bịch',1,1),(18,'vỉ',1,1),(19,'hũ',1,1),(20,'lọ',1,1),(21,'lốc',1,1),(22,'bộ',1,1),(23,'cuốn',1,1);
 /*!40000 ALTER TABLE `unit` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -592,4 +595,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-09-26  7:26:36
+-- Dump completed on 2021-09-29  5:17:40

@@ -8,6 +8,7 @@ namespace GetNowServer.Models
 {
     public partial class MyDbContext : DbContext
     {
+
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
@@ -581,7 +582,9 @@ namespace GetNowServer.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100)
-                    .HasColumnName("name");
+                    .HasColumnName("name")
+                    .UseCollation("utf8_unicode_ci")
+                    .HasCharSet("utf8");
 
                 entity.Property(e => e.Parent).HasColumnName("parent");
 

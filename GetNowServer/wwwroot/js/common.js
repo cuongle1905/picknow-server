@@ -46,6 +46,7 @@ function getDataSource(dataSource, category, url, filterAttribute, optionsData) 
                 loadUrl: url,
                 onLoaded: function (result) {
                     console.log("Receive " + category + " from server: " + result.length);
+                    addNameSearchColumn(result);
                     dataSource[category] = result;
                 }
             })
@@ -54,4 +55,15 @@ function getDataSource(dataSource, category, url, filterAttribute, optionsData) 
         console.log("Load " + category + " from client.");
         return optionsData ? dataSource[category].filter(d => d[filterAttribute] == optionsData[filterAttribute]) : dataSource[category];
     }
+}
+function addNameSearchColumn(data) {
+    if (data.length == 0 || data[0]["Name"] == undefined)
+        return;
+
+    data.forEach(function (item) {
+        var name = item["Name"];
+        var name2 = nonAccentVietnamese(name);
+        console.log("addNonAccentColumn: " + name + " -> " + name2)
+        item["NameSearch"] = name2;
+    });
 }
