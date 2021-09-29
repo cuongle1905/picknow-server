@@ -1,48 +1,54 @@
 ﻿@page
 @using GetNowServer.Models
+@model IndexModel
+@addTagHelper *, GetNowServer
+
 <script>
     selectedMenuItemId = "#ni-home"
     window.open("StoreProductGroups", "_self")
 </script>
 <h2 class="content-block">Home</h2>
 
+@*<div class="shadow p-3">@await Component.InvokeAsync("StoreProducts")</div>
+<div class="shadow p-3"><vc:store-products /></div>*@
+
 @*@(Html.DevExtreme().DataGrid<GetNowServer.Models.Ward>()
-    .ShowBorders(true)
-    .DataSource(ds => ds.Mvc()
-        .Controller("Wards")
-        .LoadAction("Get")
-        .InsertAction("Post")
-        .UpdateAction("Put")
-        .DeleteAction("Delete")
-        .Key("Id")
-    )
-    //.RemoteOperations(true)
-    .Columns(columns =>
-    {
+        .ShowBorders(true)
+        .DataSource(ds => ds.Mvc()
+            .Controller("Wards")
+            .LoadAction("Get")
+            .InsertAction("Post")
+            .UpdateAction("Put")
+            .DeleteAction("Delete")
+            .Key("Id")
+        )
+        //.RemoteOperations(true)
+        .Columns(columns =>
+        {
 
-        columns.AddFor(m => m.Id).Alignment(HorizontalAlignment.Center).CssClass("col-2");
+            columns.AddFor(m => m.Id).Alignment(HorizontalAlignment.Center).CssClass("col-2");
 
-        columns.AddFor(m => m.Name).CalculateFilterExpression(@<text>
-            function (filterValue, selectedFilterOperation, target) {
-                return filterTextVN(filterValue, selectedFilterOperation);
-            }
-        </text>);
+            columns.AddFor(m => m.Name).CalculateFilterExpression(@<text>
+                function (filterValue, selectedFilterOperation, target) {
+                    return filterTextVN(filterValue, selectedFilterOperation);
+                }
+            </text>);
 
-        columns.AddFor(m => m.District).Lookup(lookup => lookup
-            .DataSource(ds => ds.WebApi().Controller("Wards").LoadAction("DistrictsLookup").Key("Value"))
-            .ValueExpr("Value")
-            .DisplayExpr("Text")
-        );
+            columns.AddFor(m => m.District).Lookup(lookup => lookup
+                .DataSource(ds => ds.WebApi().Controller("Wards").LoadAction("DistrictsLookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
 
-        columns.AddFor(m => m.Code);
-    })
-    .FilterRow(filterRow => filterRow
-        .Visible(true)
-        .ApplyFilter(GridApplyFilterMode.Auto)
-    )
-    .Editing(e => e
-        .AllowAdding(true)
-        .AllowUpdating(true)
-        .AllowDeleting(true)
-    )
-)*@
+            columns.AddFor(m => m.Code);
+        })
+        .FilterRow(filterRow => filterRow
+            .Visible(true)
+            .ApplyFilter(GridApplyFilterMode.Auto)
+        )
+        .Editing(e => e
+            .AllowAdding(true)
+            .AllowUpdating(true)
+            .AllowDeleting(true)
+        )
+    )*@

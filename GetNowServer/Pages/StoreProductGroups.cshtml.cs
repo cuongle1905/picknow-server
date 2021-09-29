@@ -12,5 +12,10 @@ namespace GetNowServer.Pages
         public void OnGet()
         {
         }
+
+        public IActionResult LoadProducts(int productGroupId)
+        {
+            return ViewComponent("StoreProducts", new { productGroupId = productGroupId });
+        }
     }
 }
