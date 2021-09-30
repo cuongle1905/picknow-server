@@ -11,6 +11,7 @@ namespace GetNowServer.Pages.Components.StoreProducts
     {
         public void OnGet()
         {
+            var s = Request.QueryString;
         }
     }
 }

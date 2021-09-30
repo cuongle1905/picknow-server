@@ -1,63 +1,91 @@
-﻿@*@model (string greeting, string name)*@
-
+﻿@model List<GetNowServer.Models.StoreProductView>
+@{
+    var count = Model.Count;
+    var columns = 3;
+    var rows = count / columns;
+    if (count % columns > 0)
+        rows++;
+}
 <div class="store-products-component">
     <p class="h4">Hello <strong>world</strong></p>
     <p>Welcome to the ASP.NET Core course!</p>
+    <div id="products-content">
+        <div class="container">
+            @{ for (int row = 0; row < rows; row++)
+               {
+                    <div class="row">
+                    @{ for (int column = 0; column < columns; column++)
+                       {
+                            int i = row * columns + column;
+                            if (i >= count)
+                                break;
+
+                            var item = Model[i];
+                            <div class="col-4">
+                                @(item.Name)
+                            </div>
+                        }
+                    }
+                    </div>
+                }
+            }
+        </div>
+    </div>
 </div>
 
-@(Html.DevExtreme().DataGrid<GetNowServer.Models.Product>()
-    .DataSource(ds => ds.Mvc()
-        .Controller("Products")
-        .LoadAction("Get")
-        .InsertAction("Post")
-        .UpdateAction("Put")
-        .DeleteAction("Delete")
-        .Key("Id")
-    )
-    .RemoteOperations(true)
-    .Columns(columns => {
 
-        columns.AddFor(m => m.Id);
 
-        columns.AddFor(m => m.Name);
+@*<script>
+        $(function () {
+            var storeGroup = '@Model.storeGroup'
+            var storeProductGroup = '@Model.storeProductGroup'
+            alert(storeProductGroup)
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Get", "StoreProductViews")",
+                data: { storeGroup: storeGroup, storeProductGroup: storeProductGroup },
+                success: function (result) {
+                    //do something with result here
+                    alert(result.length);
+                }
+            });
+        });
+        function displayProducts(products) {
 
-        columns.AddFor(m => m.Unit).Lookup(lookup => lookup
-            .DataSource(ds => ds.WebApi().Controller("Products").LoadAction("UnitsLookup").Key("Value"))
-            .ValueExpr("Value")
-            .DisplayExpr("Text")
-        );
+        }
+    </script>*@
 
-        columns.AddFor(m => m.Code);
+@*@(Html.DevExtreme().DataGrid<GetNowServer.Models.StoreProductView>()
+        .DataSource(ds => ds.Mvc()
+            .Controller("StoreProductViews")
+            .LoadAction("Get")
+            .Key("Id")
+        )
+        .RemoteOperations(true)
+        .Columns(columns => {
 
-        columns.AddFor(m => m.Brand).Lookup(lookup => lookup
-            .DataSource(ds => ds.WebApi().Controller("Products").LoadAction("BrandsLookup").Key("Value"))
-            .ValueExpr("Value")
-            .DisplayExpr("Text")
-        );
+            columns.AddFor(m => m.StoreGroup);
 
-        columns.AddFor(m => m.Origin).Lookup(lookup => lookup
-            .DataSource(ds => ds.WebApi().Controller("Products").LoadAction("OriginsLookup").Key("Value"))
-            .ValueExpr("Value")
-            .DisplayExpr("Text")
-        );
+            columns.AddFor(m => m.StoreProductGroup);
 
-        columns.AddFor(m => m.Size).Lookup(lookup => lookup
-            .DataSource(ds => ds.WebApi().Controller("Products").LoadAction("SizesLookup").Key("Value"))
-            .ValueExpr("Value")
-            .DisplayExpr("Text")
-        );
+            columns.AddFor(m => m.Price);
 
-        columns.AddFor(m => m.Color).Lookup(lookup => lookup
-            .DataSource(ds => ds.WebApi().Controller("Products").LoadAction("ColorsLookup").Key("Value"))
-            .ValueExpr("Value")
-            .DisplayExpr("Text")
-        );
+            columns.AddFor(m => m.Id);
 
-        columns.AddFor(m => m.Description);
-    })
-    .Editing(e => e
-        .AllowAdding(true)
-        .AllowUpdating(true)
-        .AllowDeleting(true)
-    )
-)
+            columns.AddFor(m => m.Name);
+
+            columns.AddFor(m => m.Unit);
+
+            columns.AddFor(m => m.Code);
+
+            columns.AddFor(m => m.Brand);
+
+            columns.AddFor(m => m.Origin);
+
+            columns.AddFor(m => m.Size);
+
+            columns.AddFor(m => m.Color);
+
+            columns.AddFor(m => m.Description);
+        })
+    )*@

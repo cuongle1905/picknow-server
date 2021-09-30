@@ -225,7 +225,7 @@
             url: '@Url.Action("StoreProducts", "ViewComponent")',
             method: "GET",
             dataType: "html",
-            data: { id: productGroupId },
+            data: { storeGroup: storeGroupId, storeProductGroup: productGroupId },
             success: function (data) {
                 console.log(data);
                 $("#productsdiv").html(data);

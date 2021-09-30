@@ -42,6 +42,7 @@ namespace GetNowServer
             services.AddControllers();
             services.AddScoped<IWardService, WardService>();
             services.AddResponseCaching();
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

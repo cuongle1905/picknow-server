@@ -15,9 +15,9 @@ namespace GetNowServer.Controllers
         }
 
         [HttpGet]
-        public IActionResult StoreProducts(int id)
+        public IActionResult StoreProducts(int storeGroup, int storeProductGroup)
         {
-            return ViewComponent("StoreProductsViewComponent", new { id });
+            return ViewComponent("StoreProductsViewComponent", new { storeGroup, storeProductGroup });
         }
     }
 }

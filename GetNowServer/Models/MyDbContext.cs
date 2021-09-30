@@ -8,7 +8,6 @@ namespace GetNowServer.Models
 {
     public partial class MyDbContext : DbContext
     {
-
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
@@ -31,6 +30,7 @@ namespace GetNowServer.Models
         public virtual DbSet<StoreGroup> StoreGroups { get; set; }
         public virtual DbSet<StoreProduct> StoreProducts { get; set; }
         public virtual DbSet<StoreProductGroup> StoreProductGroups { get; set; }
+        public virtual DbSet<StoreProductView> StoreProductViews { get; set; }
         public virtual DbSet<StringObject> StringObjects { get; set; }
         public virtual DbSet<Unit> Units { get; set; }
         public virtual DbSet<Ward> Wards { get; set; }
@@ -583,12 +583,56 @@ namespace GetNowServer.Models
                     .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("name")
-                    .UseCollation("utf8_unicode_ci")
+                    .UseCollation("utf8_bin")
                     .HasCharSet("utf8");
 
                 entity.Property(e => e.Parent).HasColumnName("parent");
 
                 entity.Property(e => e.StoreGroup).HasColumnName("store_group");
+            });
+
+            modelBuilder.Entity<StoreProductView>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("store_product_view");
+
+                entity.Property(e => e.Brand).HasColumnName("brand");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(45)
+                    .HasColumnName("code");
+
+                entity.Property(e => e.Color).HasColumnName("color");
+
+                entity.Property(e => e.Description)
+                    .HasColumnType("text")
+                    .HasColumnName("description")
+                    .UseCollation("utf8_bin")
+                    .HasCharSet("utf8");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Origin)
+                    .HasColumnName("origin")
+                    .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.Price)
+                    .HasPrecision(10)
+                    .HasColumnName("price");
+
+                entity.Property(e => e.Size).HasColumnName("size");
+
+                entity.Property(e => e.StoreGroup).HasColumnName("store_group");
+
+                entity.Property(e => e.StoreProductGroup).HasColumnName("store_product_group");
+
+                entity.Property(e => e.Unit).HasColumnName("unit");
             });
 
             modelBuilder.Entity<StringObject>(entity =>
