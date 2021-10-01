@@ -37,8 +37,9 @@ namespace GetNowServer.Controllers
                 i.Origin,
                 i.Size,
                 i.Color,
-                i.Description
-            }).Where(i => i.StoreGroup == storeGroup && i.StoreProductGroup == storeProductGroup);
+                i.Description,
+                i.StoreProductGroups
+            }).Where(i => i.StoreGroup == storeGroup && i.StoreProductGroups.Contains("," + storeProductGroup + ","));
 
             //return Json(await DataSourceLoader.LoadAsync(storeproductviews, loadOptions));
             return Json(await storeproductviews.ToListAsync());

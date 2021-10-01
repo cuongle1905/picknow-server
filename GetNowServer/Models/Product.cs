@@ -21,9 +21,11 @@ namespace GetNowServer.Models
         public int? Size { get; set; }
         public short? Color { get; set; }
         public string Description { get; set; }
+        public int? Image { get; set; }
 
         public virtual Brand BrandNavigation { get; set; }
         public virtual Color ColorNavigation { get; set; }
+        public virtual ImageInfo ImageNavigation { get; set; }
         public virtual Origin OriginNavigation { get; set; }
         public virtual Size SizeNavigation { get; set; }
         public virtual Unit UnitNavigation { get; set; }

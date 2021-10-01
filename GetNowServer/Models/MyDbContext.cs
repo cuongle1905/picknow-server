@@ -8,6 +8,7 @@ namespace GetNowServer.Models
 {
     public partial class MyDbContext : DbContext
     {
+
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
@@ -39,6 +40,7 @@ namespace GetNowServer.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseMySql("server=localhost;port=3306;database=picknow;user=root;password=root;persist security info=False;connect timeout=300", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.25-mysql"));
             }
         }
@@ -292,6 +294,8 @@ namespace GetNowServer.Models
 
                 entity.HasIndex(e => e.Color, "fk_product_color_idx");
 
+                entity.HasIndex(e => e.Image, "fk_product_image_idx");
+
                 entity.HasIndex(e => e.Origin, "fk_product_origin_idx");
 
                 entity.HasIndex(e => e.Size, "fk_product_size_idx");
@@ -321,6 +325,8 @@ namespace GetNowServer.Models
                     .UseCollation("utf8_bin")
                     .HasCharSet("utf8");
 
+                entity.Property(e => e.Image).HasColumnName("image");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100)
@@ -343,6 +349,11 @@ namespace GetNowServer.Models
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.Color)
                     .HasConstraintName("fk_product_color");
+
+                entity.HasOne(d => d.ImageNavigation)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.Image)
+                    .HasConstraintName("fk_product_image");
 
                 entity.HasOne(d => d.OriginNavigation)
                     .WithMany(p => p.Products)
@@ -631,6 +642,10 @@ namespace GetNowServer.Models
                 entity.Property(e => e.StoreGroup).HasColumnName("store_group");
 
                 entity.Property(e => e.StoreProductGroup).HasColumnName("store_product_group");
+
+                entity.Property(e => e.StoreProductGroups)
+                    .HasMaxLength(100)
+                    .HasColumnName("store_product_groups");
 
                 entity.Property(e => e.Unit).HasColumnName("unit");
             });
