@@ -1,18 +1,6 @@
 ﻿@page
 @model GetNowServer.Pages.StoreProductGroupsModel
 <style type="text/css">
-    .container,
-    .container-fluid,
-    .container-sm,
-    .container-md,
-    .container-lg,
-    .container-xl {
-        width: 100%;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
-    }
     .dx-lookup-search .dx-texteditor-input {
         margin: 0;
         padding-top: 4px;
@@ -102,9 +90,9 @@
                 .Columns(columns =>
                 {
                     columns.AddFor(m => m.Name).Alignment(HorizontalAlignment.Left)
-                        .CellTemplate(@<text>
+                        @*.CellTemplate(@<text>
                             @(await Html.PartialAsync("_ProductGroupCellTemplate"))
-                        </text>);
+                        </text>)*@;
                     columns.AddFor(m => m.Id).Visible(false);
                     columns.AddFor(m => m.Parent).Visible(false);
                     columns.AddFor(m => m.StoreGroup).Visible(false);
@@ -146,9 +134,10 @@
                 )
                 .OnInitNewRow("onInitNewRow")
                 .OnEditingStart("onEditingStart")
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .OnSelectionChanged("onSelectionChanged")
             //.OnContentReady("onContentReady")
             //.OnEditorPreparing("onEditorPreparing")
-            //.Selection(s => s.Mode(SelectionMode.Single))
             //.FilterMode(TreeListFilterMode.FullBranch)
             )
         </div>
@@ -218,7 +207,7 @@
     //function onContentReady(e) {
     //    console.log("onContentReady");
     //}
-    function displayProducts(cellName) {
+    @*function displayProducts(cellName) {
         var productGroupId = parseInt(cellName.replace('productGroupNameCell', ''))
         //alert("display products for group: " + productGroupId)
         $.ajax({
@@ -231,6 +220,24 @@
                 $("#productsdiv").html(result);
             }
         });
+    }*@
+    function displayProducts(productGroupId) {
+        //alert("display products for group: " + productGroupId)
+        $.ajax({
+            url: '@Url.Action("StoreProducts", "ViewComponent")',
+            method: "GET",
+            dataType: "html",
+            data: { storeGroup: storeGroupId, storeProductGroup: productGroupId },
+            success: function (result) {
+                console.log(result);
+                $("#productsdiv").html(result);
+            }
+        });
+    }
+    function onSelectionChanged(e) {
+        var selectedData = e.component.getSelectedRowsData("all");
+        displayProducts(selectedData[0].Id)
+        //$("#selected-items-container").text(getEmployeeNames(selectedData));
     }
     //function onEditorPreparing(e) {
     //    if (e.dataField == "Parent") {

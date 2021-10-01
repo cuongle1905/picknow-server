@@ -12,39 +12,39 @@ namespace GetNowServer
     [ViewComponent(Name = "StoreProductsViewComponent")]
     public class StoreProductsViewComponent : ViewComponent
     {
-        //public List<StoreProductView> storeProductViews = new List<StoreProductView>();
-        //public async Task<IViewComponentResult> InvokeAsync(int storeGroup, int storeProductGroup)
-        //{
-        //    //(int storeGroup, int storeProductGroup) data = (storeGroup, storeProductGroup);
-
-        //    var request = new HttpRequestMessage(HttpMethod.Get, Url.Action("Get", "StoreProductViews", null, Request.Scheme));
-        //    request.Headers.Add("Accept", "application/json");
-        //    //request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
-        //    request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-        //    {
-        //        { "storeGroup", storeGroup.ToString() },
-        //        { "storeProductGroup", storeProductGroup.ToString() }
-        //    });
-
-        //    var client = new HttpClient();
-        //    var response = await client.SendAsync(request);
-
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        using var responseStream = await response.Content.ReadAsStreamAsync();
-        //        string responseBody = await response.Content.ReadAsStringAsync();
-        //        storeProductViews = JsonConvert.DeserializeObject<List<StoreProductView>>(responseBody);
-        //    }
-        //    else
-        //    {
-        //    }
-        //    return await Task.FromResult<IViewComponentResult>(View(storeProductViews));
-        //}
-
-        public IViewComponentResult Invoke(int columnCount, int storeGroup, int storeProductGroup)
+        public List<StoreProductView> storeProductViews = new List<StoreProductView>();
+        public async Task<IViewComponentResult> InvokeAsync(int storeGroup, int storeProductGroup)
         {
-            (int storeGroup, int storeProductGroup) data = (storeGroup, storeProductGroup);
-            return View(data);
+            //(int storeGroup, int storeProductGroup) data = (storeGroup, storeProductGroup);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, Url.Action("Get", "StoreProductViews", null, Request.Scheme));
+            request.Headers.Add("Accept", "application/json");
+            //request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "storeGroup", storeGroup.ToString() },
+                { "storeProductGroup", storeProductGroup.ToString() }
+            });
+
+            var client = new HttpClient();
+            var response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                //using var responseStream = await response.Content.ReadAsStreamAsync();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                storeProductViews = JsonConvert.DeserializeObject<List<StoreProductView>>(responseBody);
+            }
+            else
+            {
+            }
+            return await Task.FromResult<IViewComponentResult>(View(storeProductViews));
         }
+
+        //public IViewComponentResult Invoke(int columnCount, int storeGroup, int storeProductGroup)
+        //{
+        //    (int storeGroup, int storeProductGroup) data = (storeGroup, storeProductGroup);
+        //    return View(data);
+        //}
     }
 }

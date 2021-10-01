@@ -1,33 +1,35 @@
-﻿@model (int storeGroup, int storeProductGroup)
-@*@model List<GetNowServer.Models.StoreProductView>
-    @{
-        var count = Model.Count;
-        var columns = 3;
-        var rows = count / columns;
-        if (count % columns > 0)
-            rows++;
-    }*@
-<p class="h4">Hello <strong>world</strong></p>
-@*<div id="products-content">
-        <div class="container">
-            @for (int row = 0; row < rows; row++)
-            {
-                <div class="row">
-                    @for (int column = 0; column < columns; column++)
-                    {
-                        int i = row * columns + column;
-                        if (i >= count)
-                            break;
+﻿@*@model (int storeGroup, int storeProductGroup)*@
+@model List<GetNowServer.Models.StoreProductView>
+@{
+    var count = Model.Count;
+    var columns = 4;
+    var rows = count / columns;
+    if (count % columns > 0)
+        rows++;
+}
+@*<p class="h4">Hello <strong>world</strong></p>*@
+<div id="products-content">
+    <div class="container">
+        @for (int row = 0; row < rows; row++)
+        {
+            <div class="row">
+                @for (int column = 0; column < columns; column++)
+                {
+                    int i = row * columns + column;
+                    if (i >= count)
+                        break;
 
-                        var item = Model[i];
-                        <div class="col-4">
-                            @(item.Name)
-                        </div>
-                    }
-                </div>
-            }
-        </div>
-    </div>*@
+                    var item = Model[i];
+                    <div class="col-3 small item_product_main pb-2">
+                        <div><img class="image_thumb" src="~/data_images/photo.png" /></div>
+                        <div>@(item.Name)</div>
+                        <div><strong>@(Convert.ToDecimal(item.Price).ToString("n0"))đ</strong></div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
 
 
 
@@ -51,7 +53,7 @@
         }
     </script>*@
 
-@(Html.DevExtreme().DataGrid<GetNowServer.Models.NColumn>()
+@*@(Html.DevExtreme().DataGrid<GetNowServer.Models.NColumn>()
         .DataSource(ds => ds.Mvc()
             .Controller("StoreProductViews")
             .LoadAction("GetNColumns")
@@ -82,4 +84,4 @@
                     @(await Html.PartialAsync("_ProductCellTemplate"))
                 </text>);
         })
-    )
+    )*@
