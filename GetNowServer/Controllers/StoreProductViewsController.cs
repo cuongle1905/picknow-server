@@ -44,6 +44,52 @@ namespace GetNowServer.Controllers
             return Json(await storeproductviews.ToListAsync());
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetNColumns(int columns, int storeGroup, int storeProductGroup)
+        {
+            var storeproductviews = _context.StoreProductViews.Select(i => new {
+                i.StoreGroup,
+                i.StoreProductGroup,
+                i.Price,
+                i.Id,
+                i.Name,
+                i.Unit,
+                i.Code,
+                i.Brand,
+                i.Origin,
+                i.Size,
+                i.Color,
+                i.Description
+            }).Where(i => i.StoreGroup == storeGroup && i.StoreProductGroup == storeProductGroup);
+
+            var storeProducts = await storeproductviews.ToListAsync();
+            var count = storeProducts.Count;
+            var rows = count / columns;
+            if (rows * columns < count)
+                rows++;
+
+            var nColumns = new List<NColumn>();
+            var classType = typeof(NColumn);
+            for(int row = 0; row < rows; row++)
+            {
+                var nColumn = new NColumn();
+                for (int column = 0; column < columns; column++)
+                {
+                    var i = row * columns + column;
+                    if (i >= count)
+                        break;
+
+                    var item = storeProducts[i];
+                    var value = JsonConvert.SerializeObject(item);
+                    classType.GetProperty("Col" + (column + 1)).SetValue(nColumn, value);
+                }
+                nColumns.Add(nColumn);
+            }
+
+            //return Json(await DataSourceLoader.LoadAsync(storeproductviews, loadOptions));
+            return Json(nColumns);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(string values) {
             var model = new StoreProductView();

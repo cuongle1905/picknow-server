@@ -226,9 +226,9 @@
             method: "GET",
             dataType: "html",
             data: { storeGroup: storeGroupId, storeProductGroup: productGroupId },
-            success: function (data) {
-                console.log(data);
-                $("#productsdiv").html(data);
+            success: function (result) {
+                console.log(result);
+                $("#productsdiv").html(result);
             }
         });
     }

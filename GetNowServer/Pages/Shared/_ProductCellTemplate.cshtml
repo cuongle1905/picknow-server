@@ -1,0 +1,17 @@
+﻿@{ Layout = null; }
+<div id="productCell<%-rowIndex%>_<%-columnIndex%>">
+    <div style="display: block">
+        <img src="~/data_images/68e7b05c-1d84-11ec-b980-00ffc71f7bf7.png" />
+    </div>
+    <div id="productCellName<%-rowIndex%>_<%-columnIndex%>"></div>
+    <div id="productCellPrice<%-rowIndex%>_<%-columnIndex%>"></div>
+</div>
+<script>
+    var jsonString = "<%- displayValue %>".replace(/&quot;/g, '"');
+    var product = JSON.parse(jsonString);
+    //console.log(jsonString);
+    //console.log(product);
+    //console.log(product.Name);
+    $("#productCellName<%-rowIndex%>_<%-columnIndex%>").html(product.Name);
+    $("#productCellPrice<%-rowIndex%>_<%-columnIndex%>").html(numberWithCommas(product.Price) + "đ");
+</script>

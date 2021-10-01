@@ -1,37 +1,33 @@
-﻿@model List<GetNowServer.Models.StoreProductView>
-@{
-    var count = Model.Count;
-    var columns = 3;
-    var rows = count / columns;
-    if (count % columns > 0)
-        rows++;
-}
-<div class="store-products-component">
-    <p class="h4">Hello <strong>world</strong></p>
-    <p>Welcome to the ASP.NET Core course!</p>
-    <div id="products-content">
+﻿@model (int storeGroup, int storeProductGroup)
+@*@model List<GetNowServer.Models.StoreProductView>
+    @{
+        var count = Model.Count;
+        var columns = 3;
+        var rows = count / columns;
+        if (count % columns > 0)
+            rows++;
+    }*@
+<p class="h4">Hello <strong>world</strong></p>
+@*<div id="products-content">
         <div class="container">
-            @{ for (int row = 0; row < rows; row++)
-               {
-                    <div class="row">
-                    @{ for (int column = 0; column < columns; column++)
-                       {
-                            int i = row * columns + column;
-                            if (i >= count)
-                                break;
+            @for (int row = 0; row < rows; row++)
+            {
+                <div class="row">
+                    @for (int column = 0; column < columns; column++)
+                    {
+                        int i = row * columns + column;
+                        if (i >= count)
+                            break;
 
-                            var item = Model[i];
-                            <div class="col-4">
-                                @(item.Name)
-                            </div>
-                        }
+                        var item = Model[i];
+                        <div class="col-4">
+                            @(item.Name)
+                        </div>
                     }
-                    </div>
-                }
+                </div>
             }
         </div>
-    </div>
-</div>
+    </div>*@
 
 
 
@@ -55,37 +51,35 @@
         }
     </script>*@
 
-@*@(Html.DevExtreme().DataGrid<GetNowServer.Models.StoreProductView>()
+@(Html.DevExtreme().DataGrid<GetNowServer.Models.NColumn>()
         .DataSource(ds => ds.Mvc()
             .Controller("StoreProductViews")
-            .LoadAction("Get")
+            .LoadAction("GetNColumns")
+            .LoadParams(new { columns = 4, storeGroup = Model.storeGroup, storeProductGroup = Model.storeProductGroup })
             .Key("Id")
         )
-        .RemoteOperations(true)
+        .RemoteOperations(false)
+        .ShowColumnHeaders(false)
         .Columns(columns => {
 
-            columns.AddFor(m => m.StoreGroup);
+            columns.AddFor(m => m.Col1)
+                .CellTemplate(@<text>
+                    @(await Html.PartialAsync("_ProductCellTemplate"))
+                </text>);
 
-            columns.AddFor(m => m.StoreProductGroup);
+            columns.AddFor(m => m.Col2)
+                .CellTemplate(@<text>
+                    @(await Html.PartialAsync("_ProductCellTemplate"))
+                </text>);
 
-            columns.AddFor(m => m.Price);
+            columns.AddFor(m => m.Col3)
+                .CellTemplate(@<text>
+                    @(await Html.PartialAsync("_ProductCellTemplate"))
+                </text>);
 
-            columns.AddFor(m => m.Id);
-
-            columns.AddFor(m => m.Name);
-
-            columns.AddFor(m => m.Unit);
-
-            columns.AddFor(m => m.Code);
-
-            columns.AddFor(m => m.Brand);
-
-            columns.AddFor(m => m.Origin);
-
-            columns.AddFor(m => m.Size);
-
-            columns.AddFor(m => m.Color);
-
-            columns.AddFor(m => m.Description);
+            columns.AddFor(m => m.Col4)
+                .CellTemplate(@<text>
+                    @(await Html.PartialAsync("_ProductCellTemplate"))
+                </text>);
         })
-    )*@
+    )
