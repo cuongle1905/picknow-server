@@ -25,11 +25,12 @@ namespace GetNowServer.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Get(DataSourceLoadOptions loadOptions) {
-            var storeproductgroups = _context.StoreProductGroups.Select(i => new {
+            var storeproductgroups = _context.StoreProductGroupViews.Select(i => new {
                 i.Id,
                 i.StoreGroup,
                 i.Name,
-                i.Parent
+                i.Parent,
+                i.ProductCount
             });
 
             // If you work with a large amount of data, consider specifying the PaginateViaPrimaryKey and PrimaryKey properties.

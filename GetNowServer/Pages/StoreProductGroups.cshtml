@@ -106,7 +106,7 @@
                 </div>
             </div>
 
-            @(Html.DevExtreme().TreeList<GetNowServer.Models.StoreProductGroup>()
+            @(Html.DevExtreme().TreeList<GetNowServer.Models.StoreProductGroupView>()
                 //.Width("50%")
                 .ID("treeList1")
                 .ShowBorders(false)
@@ -270,14 +270,21 @@
     }
     function onSelectionChanged(e) {
         var selectedData = e.component.getSelectedRowsData("all");
-        selectedGroupId = selectedData[0].Id;
-        showEditDiv();
-        displayProducts(selectedGroupId);
+        if (selectedData.length > 0) {
+            selectedGroupId = selectedData[0].Id;
+            showEditDiv();
+            displayProducts(selectedGroupId);
+        } else {
+            selectedGroupId = 0;
+        }
         //$("#selected-items-container").text(getEmployeeNames(selectedData));
     }
     function showEditDiv() {
         var targetDivId = 'productGroupCellDiv' + selectedGroupId;
         var targetDiv = document.getElementById(targetDivId);
+        if (targetDiv == undefined)
+            return;
+
         var editDiv = document.getElementById('editDiv1');
         if (editDiv == undefined) {
             editDiv = document.getElementById('editDiv');

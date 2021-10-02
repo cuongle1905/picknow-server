@@ -8,7 +8,6 @@ namespace GetNowServer.Models
 {
     public partial class MyDbContext : DbContext
     {
-
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
@@ -31,6 +30,7 @@ namespace GetNowServer.Models
         public virtual DbSet<StoreGroup> StoreGroups { get; set; }
         public virtual DbSet<StoreProduct> StoreProducts { get; set; }
         public virtual DbSet<StoreProductGroup> StoreProductGroups { get; set; }
+        public virtual DbSet<StoreProductGroupView> StoreProductGroupViews { get; set; }
         public virtual DbSet<StoreProductView> StoreProductViews { get; set; }
         public virtual DbSet<StringObject> StringObjects { get; set; }
         public virtual DbSet<Unit> Units { get; set; }
@@ -598,6 +598,28 @@ namespace GetNowServer.Models
                     .HasCharSet("utf8");
 
                 entity.Property(e => e.Parent).HasColumnName("parent");
+
+                entity.Property(e => e.StoreGroup).HasColumnName("store_group");
+            });
+
+            modelBuilder.Entity<StoreProductGroupView>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("store_product_group_view");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("name")
+                    .UseCollation("utf8_bin")
+                    .HasCharSet("utf8");
+
+                entity.Property(e => e.Parent).HasColumnName("parent");
+
+                entity.Property(e => e.ProductCount).HasColumnName("product_count");
 
                 entity.Property(e => e.StoreGroup).HasColumnName("store_group");
             });

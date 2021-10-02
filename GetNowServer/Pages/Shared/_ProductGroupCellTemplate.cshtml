@@ -1,9 +1,8 @@
 ﻿@{ Layout = null; }
 <div style="display: inline-block">
-    <div style="display:inline-block; vertical-align: top"> <%- data.Name %></div>
+    <div id="productGroupCellText<%- data.Id %>" style="display:inline-block; vertical-align: top"> <%- data.Name %> <span>(<%- data.ProductCount %>)</span></div>
     <div id="productGroupCellDiv<%- data.Id %>" style="display: inline-block"></div>
 </div>
-
 
 @*<div>
     <a id="#productGroupCell<%- data.Id %>" class="dx-link" name="productGroupNameCell<%- data.Id %>" title="Click to view products" onclick="displayProducts(this.name)"><%- data.Name %></a>
