@@ -33,16 +33,38 @@
     .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
         width: calc(100% - 100px);
     }
+    .mybutton {
+        color: #337ab7;
+        font-size: 17px;
+        cursor: pointer;
+        padding: 0 4px;
+    }
+    .dx-treelist-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover:not(.dx-row-lines) > td,
+    .dx-treelist-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-lines) > td {
+        background-color: transparent;
+        color: #337ab7;
+        border: none;
+        font-weight: bold;
+    }
 </style>
 <h2 class="content-block">Store Product Groups</h2>
 <script>
     selectedMenuItemId = "#ni-storeproductgroups"
     var myDataSource = {};
     var storeGroupId = 1;
+    var selectedGroupId;
 </script>
+<div id="editDivContainer" style="display: none">
+    <div id="editDiv" class="pl-3">
+        <a title="Add child"><i class="dx-icon dx-icon-add mybutton" onclick="addData()"></i></a>
+        <a title="Edit"><i class="dx-icon dx-icon-edit mybutton" onclick="editData()"></i></a>
+        <a title="Delete"><i class="dx-icon dx-icon-remove mybutton" onclick="deleteData()"></i></a>
+    </div>
+</div>
+
 <div class="container">
     <div class="row">
-        <div class="col-4">
+        <div id="treeListContainer" class="col-4">
             <div class="dx-field">
                 <div class="label1 dx-field-label">Store Group:</div>
                 <div class="dx-field-value">
@@ -64,8 +86,8 @@
             @(Html.DevExtreme().TreeList<GetNowServer.Models.StoreProductGroup>()
                 //.Width("50%")
                 .ID("treeList1")
-                .ShowBorders(true)
-                .ShowRowLines(true)
+                .ShowBorders(false)
+                .ShowRowLines(false)
                 .ShowColumnHeaders(false)
                 //.HeaderFilter(headerFilter => headerFilter.Visible(true))
                 .DataSource(ds => ds.Mvc()
@@ -90,18 +112,18 @@
                 .Columns(columns =>
                 {
                     columns.AddFor(m => m.Name).Alignment(HorizontalAlignment.Left)
-                        @*.CellTemplate(@<text>
+                        .CellTemplate(@<text>
                             @(await Html.PartialAsync("_ProductGroupCellTemplate"))
-                        </text>)*@;
+                        </text>);
                     columns.AddFor(m => m.Id).Visible(false);
                     columns.AddFor(m => m.Parent).Visible(false);
                     columns.AddFor(m => m.StoreGroup).Visible(false);
                     //columns.AddFor(m => m.Id).Width("20%");
                 })
                 .Editing(e => e
-                    .AllowAdding(true)
-                    .AllowUpdating(true)
-                    .AllowDeleting(true)
+                    //.AllowAdding(true)
+                    //.AllowUpdating(true)
+                    //.AllowDeleting(true)
                     .Mode(GridEditMode.Popup)
                     .Popup(p => p
                         .Title("Store Product Group")
@@ -132,13 +154,12 @@
                             });
                     }))
                 )
+                .OnInitialized("onInitialized")
                 .OnInitNewRow("onInitNewRow")
                 .OnEditingStart("onEditingStart")
                 .Selection(s => s.Mode(SelectionMode.Single))
                 .OnSelectionChanged("onSelectionChanged")
-            //.OnContentReady("onContentReady")
-            //.OnEditorPreparing("onEditorPreparing")
-            //.FilterMode(TreeListFilterMode.FullBranch)
+                .OnContentReady("onContentReady")
             )
         </div>
         <div id="productsdiv" class="col-8">
@@ -150,13 +171,17 @@
 
 
 <script>
-    @*var storeGroups = [];
+    var treeList;
     $(function () {
-        $.get('@Url.Action("Get", "StoreGroups")', function(data) {
-            storeGroups = data.data;
-            console.log(storeGroups[0]["Name"]);
+        $("#add-button").dxButton({
+            icon: "add",
+            type: "success",
+            text: "",
+            onClick: function (e) {
+                DevExpress.ui.notify("The Add button was clicked");
+            }
         });
-    });*@
+    });
 
     var optionsData;
     var storeProductGroups = [];
@@ -186,6 +211,9 @@
         addNameSearchColumn(storeProductGroups);
         console.log("treeDataLoaded " + storeProductGroups.length);
     }
+    function onInitialized(e) {
+        treeList = e.component;
+    }
     function onInitNewRow(e) {
         console.log("onInitNewRow " + storeProductGroups[0]["Name"]);
         e.component.option("editing.popup.title", "Create New Store Product Group");
@@ -204,23 +232,6 @@
         console.log("onShowEditPopup");
         $("#nameTextBox1").find("input").focus();
     }
-    //function onContentReady(e) {
-    //    console.log("onContentReady");
-    //}
-    @*function displayProducts(cellName) {
-        var productGroupId = parseInt(cellName.replace('productGroupNameCell', ''))
-        //alert("display products for group: " + productGroupId)
-        $.ajax({
-            url: '@Url.Action("StoreProducts", "ViewComponent")',
-            method: "GET",
-            dataType: "html",
-            data: { storeGroup: storeGroupId, storeProductGroup: productGroupId },
-            success: function (result) {
-                console.log(result);
-                $("#productsdiv").html(result);
-            }
-        });
-    }*@
     function displayProducts(productGroupId) {
         //alert("display products for group: " + productGroupId)
         $.ajax({
@@ -236,19 +247,43 @@
     }
     function onSelectionChanged(e) {
         var selectedData = e.component.getSelectedRowsData("all");
-        displayProducts(selectedData[0].Id)
+        selectedGroupId = selectedData[0].Id;
+        showEditDiv();
+        displayProducts(selectedGroupId);
         //$("#selected-items-container").text(getEmployeeNames(selectedData));
     }
-    //function onEditorPreparing(e) {
-    //    if (e.dataField == "Parent") {
-    //        e.editorOptions.closeOnOutsideClick = true;
-    //    }
-    //}
-    //function refreshStoreGroupData() {
-    //    console.log("refreshStoreGroupData");
-    //    var lookupDataSource = $("#lookup1").dxLookup("getDataSource");
-    //    lookupDataSource.reloadData();
-    //}
+    function showEditDiv() {
+        var targetDivId = 'productGroupCellDiv' + selectedGroupId;
+        var targetDiv = document.getElementById(targetDivId);
+        var editDiv = document.getElementById('editDiv1');
+        if (editDiv == undefined) {
+            editDiv = document.getElementById('editDiv');
+            editDiv = editDiv.cloneNode(true);
+            editDiv.id = 'editDiv1';
+        }
+        if (!targetDiv.contains(editDiv))
+            targetDiv.appendChild(editDiv);
+        
+        //$('#editDiv').detach().appendTo(targetDivId);
+    }
+    function onContentReady(e) {
+        console.log("onContentReady");
+        if (selectedGroupId != undefined)
+            showEditDiv();
+    }
+    function addData() {
+        if (selectedGroupId != undefined) {
+            treeList.addRow(selectedGroupId);
+        }
+    }
+    function editData() {
+        if (selectedGroupId != undefined) {
+            var rowIndex = treeList.getRowIndexByKey(selectedGroupId)
+            alert(rowIndex);
+            if (rowIndex != undefined)
+                treeList.editRow(rowIndex);
+        }
+    }
 </script>
 
 @*<script>

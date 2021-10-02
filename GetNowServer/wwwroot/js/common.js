@@ -162,3 +162,9 @@ function showChangeIconPopover(dataId, fileUploaderId, popupContainerId) {
         $("#removeIconButton").dxButton("instance").option("visible", false);
     }
 }
+
+(function ($) {
+    $.fn.descendantOf = function (parentId) {
+        return this.closest(parentId).length > 0;
+    }
+})(jQuery)
