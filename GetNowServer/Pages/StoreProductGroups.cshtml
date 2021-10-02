@@ -279,9 +279,15 @@
     function editData() {
         if (selectedGroupId != undefined) {
             var rowIndex = treeList.getRowIndexByKey(selectedGroupId)
-            alert(rowIndex);
             if (rowIndex != undefined)
                 treeList.editRow(rowIndex);
+        }
+    }
+    function deleteData() {
+        if (selectedGroupId != undefined) {
+            var rowIndex = treeList.getRowIndexByKey(selectedGroupId)
+            if (rowIndex != undefined)
+                treeList.deleteRow(rowIndex);
         }
     }
 </script>
