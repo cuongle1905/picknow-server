@@ -19,6 +19,8 @@ namespace GetNowServer.Models
         public int? Size { get; set; }
         public short? Color { get; set; }
         public string Description { get; set; }
+        public int? Image { get; set; }
+        public string ImageFile { get; set; }
         public string StoreProductGroups { get; set; }
     }
 }

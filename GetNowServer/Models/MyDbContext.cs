@@ -624,6 +624,12 @@ namespace GetNowServer.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.Image).HasColumnName("image");
+
+                entity.Property(e => e.ImageFile)
+                    .HasMaxLength(45)
+                    .HasColumnName("image_file");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100)

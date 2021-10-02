@@ -70,3 +70,95 @@ function addNameSearchColumn(data) {
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
+
+function createDxFileUploader(uploadUrl, fileUploaderId, popupContainerId) {
+    if (fileUploaderId == undefined)
+        fileUploaderId = "#changeIconFileUploader";
+
+    if (popupContainerId == undefined)
+        popupContainerId = "#changeIconPopoverContainer";
+
+    $(fileUploaderId).dxFileUploader({
+        multiple: false,
+        accept: "*",
+        value: [],
+        name: "myFile1",
+        uploadMode: "instantly",
+        uploadUrl: uploadUrl,
+        allowedFileExtensions: [".png", ".jpg", ".jpeg"],
+        minFileSize: 128,
+        maxFileSize: 1024 * 1024,
+        onUploaded: function (e) {
+            $("#changeIconPopoverContainer").dxPopover("hide");
+            var fileUploader = e.component;
+            fileUploader.reset();
+            var name = fileUploader.option("name");
+            var dataId = name.replace("myFile", "");
+            var img = document.getElementById("itemImg" + dataId);
+            img.src = "/data_images/" + e.request.responseText;
+            console.log("Uploaded image");
+            console.log(e.request.responseText);
+        }
+    });
+
+    $(popupContainerId).dxPopover({
+        target: "#itemImgLink1",
+        showEvent: "dxclick",
+        position: "top",
+        width: 400,
+        title: "Change Icon:",
+        showTitle: true,
+        showCloseButton: true,
+        shading: true,
+        shadingColor: "rgba(0, 0, 0, 0.5)"
+    });
+
+    $("#removeIconButton").dxButton({
+        stylingMode: "contained",
+        text: "Remove Icon",
+        type: "danger",
+        width: 160,
+        onClick: function () {
+            $.ajax({
+                url: '@Url.Action("Remove", "Upload")',
+                data: { dataId: $("#removeIconButton").attr("dataId") },
+                dataType: "text",
+                type: "POST",
+                success: function (response) {
+                    $("#changeIconPopoverContainer").dxPopover("hide");
+                    var dataId = $("#removeIconButton").attr("dataId");
+                    var img = document.getElementById("itemImg" + dataId);
+                    img.src = "";
+                },
+                failure: function (response) {
+                    alert("failure " + response.responseText);
+                },
+                error: function (response) {
+                    alert("error " + response.responseText);
+                }
+            });
+        }
+    });
+}
+
+function showChangeIconPopover(dataId, fileUploaderId, popupContainerId) {
+    if (fileUploaderId == undefined)
+        fileUploaderId = "#changeIconFileUploader";
+
+    if (popupContainerId == undefined)
+        popupContainerId = "#changeIconPopoverContainer";
+
+    $(popupContainerId).dxPopover("show", "#itemImgLink" + dataId);
+    var fileUploader = $(fileUploaderId).dxFileUploader("instance");
+    fileUploader.option("name", "myFile" + dataId);
+
+    var img = document.getElementById("itemImg" + dataId);
+    if (img.complete && img.naturalHeight !== 0) {
+        //alert("hi");
+        $("#removeIconButton").dxButton("instance").option("visible", true);
+        $("#removeIconButton").attr("dataId", dataId);
+    } else {
+        //alert("bye");
+        $("#removeIconButton").dxButton("instance").option("visible", false);
+    }
+}

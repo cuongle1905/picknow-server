@@ -21,7 +21,6 @@ namespace GetNowServer.Controllers
             _context = context;
         }
 
-
         [HttpPost]
         [EnableCors("CorsPolicy")]
         public ActionResult CompanyLogo()
@@ -36,6 +35,28 @@ namespace GetNowServer.Controllers
                 {
                     var company = _context.Companies.FirstOrDefault(x => x.Id == objectId);
                     company.Logo = newImageInfoId;
+                    _context.SaveChanges();
+                    return Ok(fileName);
+                }
+            }
+            Response.StatusCode = 400;
+            return new EmptyResult();
+        }
+
+        [HttpPost]
+        [EnableCors("CorsPolicy")]
+        public ActionResult ProductImage()
+        {
+            var myFile = Request.Form.Files[0];
+            var objectId = ObjectIdFromFile(myFile);
+            if (objectId > 0)
+            {
+                string fileName;
+                int newImageInfoId = Upload(myFile, out fileName);
+                if (newImageInfoId > 0)
+                {
+                    var company = _context.Products.FirstOrDefault(x => x.Id == objectId);
+                    company.Image = newImageInfoId;
                     _context.SaveChanges();
                     return Ok(fileName);
                 }

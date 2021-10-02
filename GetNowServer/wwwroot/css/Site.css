@@ -1,6 +1,11 @@
 body {
 }
 
+.smaller {
+    font-size: 70%;
+    font-weight: 400;
+}
+
 .container,
 .container-fluid,
 .container-sm,
@@ -43,7 +48,7 @@ body {
     /*float: left;*/
     background: #fff;
     outline: solid 1px #ebebeb;
-    outline-offset: -4px;
+    outline-offset: -6px;
     /*    padding: 10px;
     margin: 4px;*/
     /*    -webkit-transition: -webkit-transform 0.5s ease, opacity 0.2s ease, max-height 0s step-end, max-width 0s step-end, padding 0s step-end;

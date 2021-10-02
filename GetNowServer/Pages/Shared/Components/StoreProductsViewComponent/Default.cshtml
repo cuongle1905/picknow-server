@@ -20,16 +20,25 @@
                         break;
 
                     var item = Model[i];
-                    <div class="col-3 small item_product_main pb-2">
-                        <div><img class="image_thumb" src="~/data_images/photo.png" /></div>
-                        <div>@(item.Name)</div>
-                        <div><strong>@(Convert.ToDecimal(item.Price).ToString("n0"))đ</strong></div>
+                    <div class="col-3 item_product_main pb-2">
+                        <div><a id="itemImgLink@(item.Id)" name="itemImgLink@(item.Id)" title="Click to change image" onclick="showChangeIconPopover(@(item.Id))"><img id="itemImg@(item.Id)" class="image_thumb" src="~/data_images/@(item.ImageFile??"photo.png")" /></a></div>
+                        <div class="small">@(item.Name)</div>
+                        <div class="small"><strong>@(Convert.ToDecimal(item.Price).ToString("n0"))đ</strong></div>
                     </div>
                 }
             </div>
         }
     </div>
 </div>
+<div id="changeIconPopoverContainer">
+    <div id="changeIconFileUploader"></div>
+    <div id="removeIconButton"></div>
+</div>
+<script>
+    $(function () {
+        createDxFileUploader('@Url.Action("ProductImage", "Upload")');
+    });
+</script>
 
 
 
