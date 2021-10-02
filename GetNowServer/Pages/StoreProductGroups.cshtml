@@ -7,44 +7,67 @@
         padding-bottom: 4px;
         min-height: 30px;
     }
+
     .dx-lookup-search-wrapper {
         padding: 8px 8px 4px;
     }
+
     .dx-list .dx-empty-message, .dx-list-item-content {
         padding: 6px;
     }
+
     .dx-lookup-popup-search .dx-list {
         height: 100%;
         height: calc(100% - 44px);
     }
+
     .dx-popup-bottom.dx-toolbar {
         padding: 4px 16px 12px;
         overflow: visible;
     }
+
     .dx-popup-cancel .dx-button-content {
         padding: 5px 8px 6px;
     }
+
     .dx-popup-bottom .dx-button {
         min-width: 80px;
     }
+
     .label1 {
         width: 100px;
     }
+
     .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
         width: calc(100% - 100px);
     }
-    .mybutton {
-        color: #337ab7;
-        font-size: 17px;
-        cursor: pointer;
-        padding: 0 4px;
-    }
+
     .dx-treelist-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover:not(.dx-row-lines) > td,
     .dx-treelist-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-lines) > td {
         background-color: transparent;
         color: #337ab7;
         border: none;
         font-weight: bold;
+    }
+
+    .dx-treelist-rowsview .dx-selection .dx-treelist-collapsed span::before,
+    .dx-treelist-rowsview .dx-selection .dx-treelist-expanded span::before {
+        color: #337ab7;
+    }
+
+    .myButton {
+        font-size: 1.1rem;
+        padding: 0 2px;
+    }
+
+    #myButtonLinkAdd, #myButtonLinkEdit, #myButtonLinkDelete {
+        color: lightgray;
+        cursor: pointer;
+    }
+
+    #myButtonLinkAdd:hover, #myButtonLinkEdit:hover, #myButtonLinkDelete:hover,
+    #myButtonLinkAdd:active, #myButtonLinkEdit:active, #myButtonLinkDelete:active {
+        color: #3987cc;
     }
 </style>
 <h2 class="content-block">Store Product Groups</h2>
@@ -56,9 +79,9 @@
 </script>
 <div id="editDivContainer" style="display: none">
     <div id="editDiv" class="pl-3">
-        <a title="Add child"><i class="dx-icon dx-icon-add mybutton" onclick="addData()"></i></a>
-        <a title="Edit"><i class="dx-icon dx-icon-edit mybutton" onclick="editData()"></i></a>
-        <a title="Delete"><i class="dx-icon dx-icon-remove mybutton" onclick="deleteData()"></i></a>
+        <a id="myButtonLinkAdd" title="Add child"><i class="dx-icon dx-icon-add myButton" onclick="addData()"></i></a>
+        <a id="myButtonLinkEdit" title="Edit"><i class="dx-icon dx-icon-edit myButton" onclick="editData()"></i></a>
+        <a id="myButtonLinkDelete" title="Delete"><i class="dx-icon dx-icon-remove myButton" onclick="deleteData()"></i></a>
     </div>
 </div>
 
@@ -263,7 +286,7 @@
         }
         if (!targetDiv.contains(editDiv))
             targetDiv.appendChild(editDiv);
-        
+
         //$('#editDiv').detach().appendTo(targetDivId);
     }
     function onContentReady(e) {
