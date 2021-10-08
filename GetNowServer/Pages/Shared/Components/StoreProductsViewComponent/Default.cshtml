@@ -8,6 +8,11 @@
         rows++;
 }
 @*<p class="h4">Hello <strong>world</strong></p>*@
+<div class="d-flex">
+    <div class="ml-auto">
+        <div id="add-product"></div>
+    </div>
+</div>
 <div id="products-content">
     <div class="container">
         @for (int row = 0; row < rows; row++)
@@ -36,61 +41,81 @@
 </div>
 <script>
     $(function () {
+        $("#add-product").dxButton({
+            icon: "add",
+            type: "default",
+            stylingMode: "contained",
+            text: "Add Product",
+            onClick: function (e) {
+                addProduct();
+            }
+        });
+
         createDxFileUploader('@Url.Action("ProductImage", "Upload")');
     });
-</script>
 
+    function addProduct() {
+        var product = @Html.Raw(Json.Serialize(@Model[0]));
+        $("#popupDiv").dxPopup({
+            visible: true,
+            title: 'Add Product',
+            minwidth: 500,
+            minheight: 500,
+            position: {
+                my: 'center',
+                at: 'center',
+                of: window
+            },
+            dragEnabled: true,
+            contentTemplate: function (e) {
+                var formContainer = $("<div id='subForm'>");
+                myNewCustomerForm = formContainer.dxForm({
+                    formData: product,
+                    readOnly: false,
+                    showColonAfterLabel: false,
+                    labelLocation: "left",
+                    //minColWidth: 300,
+                    showValidationSummary: true,
+                    items: [
+                        {
+                            itemType: "group",
+                            caption: "Product Information",
+                            colCount: 2,
+                            items: ["Id", "Name", "Unit", "Code", "Brand", "Origin", "Size", "Color", "Description", "Image"]
+                            //items: [{
+                            //    dataField: "Name",
+                            //    label: { text: "Name" },
+                            //    editorOptions: {
+                            //    },
+                            //    validationRules: [{
+                            //        type: "required",
+                            //        message: "Product Name is required"
+                            //    }]
+                            //}]
+                        }, {
+                            itemType: "button",
+                            horizontalAlignment: "left",
+                            colSpan: 2,
+                            buttonOptions: {
+                                icon: "save",
+                                text: "Save",
+                                type: "default",
+                                stylingMode: "contained",
+                                useSubmitBehavior: true,
+                                onClick: function () {
+                                    mainForm.getEditor("mainFormSubmit").option("useSubmitBehavior", false);
+                                    $("#popupForm").submit();
+                                }
+                            },
+                        }
+                    ]
+                }).dxForm("instance");
+                e.append(formContainer);
 
-
-@*<script>
-        $(function () {
-            var storeGroup = '@Model.storeGroup'
-            var storeProductGroup = '@Model.storeProductGroup'
-            alert(storeProductGroup)
-            $.ajax({
-                type: "GET",
-                url: "@Url.Action("Get", "StoreProductViews")",
-                data: { storeGroup: storeGroup, storeProductGroup: storeProductGroup },
-                success: function (result) {
-                    //do something with result here
-                    alert(result.length);
-                }
-            });
+                $("#popupForm").on("submit", function (e) {
+                    alert('#popupForm submit pressed');
+                });
+            }
         });
-        function displayProducts(products) {
-
-        }
-    </script>*@
-
-@*@(Html.DevExtreme().DataGrid<GetNowServer.Models.NColumn>()
-        .DataSource(ds => ds.Mvc()
-            .Controller("StoreProductViews")
-            .LoadAction("GetNColumns")
-            .LoadParams(new { columns = 4, storeGroup = Model.storeGroup, storeProductGroup = Model.storeProductGroup })
-            .Key("Id")
-        )
-        .RemoteOperations(false)
-        .ShowColumnHeaders(false)
-        .Columns(columns => {
-
-            columns.AddFor(m => m.Col1)
-                .CellTemplate(@<text>
-                    @(await Html.PartialAsync("_ProductCellTemplate"))
-                </text>);
-
-            columns.AddFor(m => m.Col2)
-                .CellTemplate(@<text>
-                    @(await Html.PartialAsync("_ProductCellTemplate"))
-                </text>);
-
-            columns.AddFor(m => m.Col3)
-                .CellTemplate(@<text>
-                    @(await Html.PartialAsync("_ProductCellTemplate"))
-                </text>);
-
-            columns.AddFor(m => m.Col4)
-                .CellTemplate(@<text>
-                    @(await Html.PartialAsync("_ProductCellTemplate"))
-                </text>);
-        })
-    )*@
+    }
+</script>

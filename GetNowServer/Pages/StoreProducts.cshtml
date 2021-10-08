@@ -1,5 +1,5 @@
 ﻿@page
-@model GetNowServer.Pages.StoreProductGroupsModel
+@model GetNowServer.Pages.StoreProductsModel
 <style type="text/css">
     .dx-lookup-search .dx-texteditor-input {
         margin: 0;
@@ -69,8 +69,21 @@
     #myButtonLinkAdd:active, #myButtonLinkEdit:active, #myButtonLinkDelete:active {
         color: #3987cc;
     }
+    a.top-right-button {
+        background-color: #337ab7;
+        color: white;
+        border-radius: 4px;
+        font-size: 1rem;
+        padding: 6px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    a.top-right-button:hover, a.top-right-button:active {
+        background-color: #3987cc;
+        text-decoration: none;
+    }
 </style>
-<h2 class="content-block">Store Product Groups</h2>
+<h3 class="content-block mb-3">Store Products</h3>
 <script>
     selectedMenuItemId = "#ni-storeproductgroups"
     var myDataSource = {};
@@ -112,6 +125,7 @@
                 .ShowBorders(false)
                 .ShowRowLines(false)
                 .ShowColumnHeaders(false)
+                .ExpandNodesOnFiltering(false)
                 //.HeaderFilter(headerFilter => headerFilter.Visible(true))
                 .DataSource(ds => ds.Mvc()
                     .Controller("StoreProductGroups")
@@ -191,20 +205,10 @@
     </div>
 </div>
 
-
+<div id="popupDiv"></div>
 
 <script>
     var treeList;
-    $(function () {
-        $("#add-button").dxButton({
-            icon: "add",
-            type: "success",
-            text: "",
-            onClick: function (e) {
-                DevExpress.ui.notify("The Add button was clicked");
-            }
-        });
-    });
 
     var optionsData;
     var storeProductGroups = [];
@@ -230,9 +234,11 @@
         e.component.columnOption('Id', 'formItem', formItemConfig);
     }
     function treeDataLoaded(result) {
+        console.log("treeDataLoaded storeGroupId = " + storeGroupId);
         storeProductGroups = result.filter(d => d.StoreGroup == storeGroupId);
         addNameSearchColumn(storeProductGroups);
         console.log("treeDataLoaded " + storeProductGroups.length);
+        updateTreeFilter();
     }
     function onInitialized(e) {
         treeList = e.component;
@@ -272,12 +278,12 @@
         var selectedData = e.component.getSelectedRowsData("all");
         if (selectedData.length > 0) {
             selectedGroupId = selectedData[0].Id;
-            showEditDiv();
             displayProducts(selectedGroupId);
+            showEditDiv();
+            treeList.expandRow(selectedGroupId);
         } else {
             selectedGroupId = 0;
         }
-        //$("#selected-items-container").text(getEmployeeNames(selectedData));
     }
     function showEditDiv() {
         var targetDivId = 'productGroupCellDiv' + selectedGroupId;
@@ -293,8 +299,6 @@
         }
         if (!targetDiv.contains(editDiv))
             targetDiv.appendChild(editDiv);
-
-        //$('#editDiv').detach().appendTo(targetDivId);
     }
     function onContentReady(e) {
         console.log("onContentReady");
@@ -321,54 +325,3 @@
         }
     }
 </script>
-
-@*<script>
-        function onDragChange(e) {
-            var treeList = e.component,
-                visibleRows = treeList.getVisibleRows(),
-                sourceNode = treeList.getNodeByKey(e.itemData.Id),
-                targetNode = visibleRows[e.toIndex].node;
-
-            while (targetNode && targetNode.data) {
-                if (targetNode.data.Id === sourceNode.data.Id) {
-                    e.cancel = true;
-                    break;
-                }
-                targetNode = targetNode.parent;
-            }
-        }
-
-        function onReorder(e) {
-            var visibleRows = e.component.getVisibleRows();
-
-            if (e.dropInsideItem) {
-                e.itemData.Head_ID = visibleRows[e.toIndex].key;
-                console.log("onReorder dropInsideItem " + e.itemData.Id + " -> " + e.itemData.Head_ID)
-            } else {
-                var sourceData = e.itemData,
-                    toIndex = e.fromIndex > e.toIndex ? e.toIndex - 1 : e.toIndex,
-                    targetData = toIndex >= 0 ? visibleRows[toIndex].node.data : null;
-
-                if (targetData && e.component.isRowExpanded(targetData.Id)) {
-                    sourceData.Head_ID = targetData.Id;
-                    targetData = null;
-                } else {
-                    sourceData.Head_ID = targetData ? targetData.Head_ID : e.component.option('rootValue');
-                }
-                console.log("onReorder !dropInsideItem " + e.itemData.Id + " -> " + e.itemData.Head_ID)
-
-                var storeProductGroups = getStoreProductGroups()
-                var sourceIndex = storeProductGroups.indexOf(sourceData);
-                storeProductGroups.splice(sourceIndex, 1);
-
-                var targetIndex = storeProductGroups.indexOf(targetData) + 1;
-                storeProductGroups.splice(targetIndex, 0, sourceData);
-            }
-
-            e.component.refresh();
-        }
-
-        function getTreeList() {
-            return $("#treeList").dxTreeList("instance");
-        }
-    </script>*@

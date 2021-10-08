@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace GetNowServer.Pages
 {
-    public class StoreProductGroupsModel : PageModel
+    public class StoreProductsModel : PageModel
     {
         public void OnGet()
         {
