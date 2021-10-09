@@ -10,7 +10,7 @@
 @*<p class="h4">Hello <strong>world</strong></p>*@
 <div class="d-flex">
     <div class="ml-auto">
-        <div id="add-product"></div>
+        <div id="add-product-button"></div>
     </div>
 </div>
 <div id="products-content">
@@ -41,7 +41,7 @@
 </div>
 <script>
     $(function () {
-        $("#add-product").dxButton({
+        $("#add-product-button").dxButton({
             icon: "add",
             type: "default",
             stylingMode: "contained",
@@ -50,12 +50,11 @@
                 addProduct();
             }
         });
-
         createDxFileUploader('@Url.Action("ProductImage", "Upload")');
     });
 
     function addProduct() {
-        var product = @Html.Raw(Json.Serialize(@Model[0]));
+        //var product = @Html.Raw(Json.Serialize(@Model[0]));
         $("#popupDiv").dxPopup({
             visible: true,
             title: 'Add Product',
@@ -70,7 +69,7 @@
             contentTemplate: function (e) {
                 var formContainer = $("<div id='subForm'>");
                 myNewCustomerForm = formContainer.dxForm({
-                    formData: product,
+                    //formData: product,
                     readOnly: false,
                     showColonAfterLabel: false,
                     labelLocation: "left",
@@ -79,19 +78,27 @@
                     items: [
                         {
                             itemType: "group",
-                            caption: "Product Information",
+                            //caption: "Product Information",
                             colCount: 2,
-                            items: ["Id", "Name", "Unit", "Code", "Brand", "Origin", "Size", "Color", "Description", "Image"]
-                            //items: [{
-                            //    dataField: "Name",
-                            //    label: { text: "Name" },
-                            //    editorOptions: {
-                            //    },
-                            //    validationRules: [{
-                            //        type: "required",
-                            //        message: "Product Name is required"
-                            //    }]
-                            //}]
+                            //items: ["Id", "Name", "Unit", "Code", "Brand", "Origin", "Size", "Color", "Description", "Image"]
+                            items: [
+                                {
+                                    dataField: "Name",
+                                    label: { text: "Name" },
+                                    editorOptions: {
+                                    },
+                                    validationRules: [{
+                                        type: "required",
+                                        message: "Product Name is required"
+                                    }]
+                                },
+                                {
+                                    dataField: "StoreProductGroup",
+                                    label: { text: "Group" },
+                                    editorType: "dxLookup",
+                                    editorOptions: {}
+                                }
+                            ]
                         }, {
                             itemType: "button",
                             horizontalAlignment: "left",
