@@ -273,6 +273,7 @@ CREATE TABLE `product` (
   KEY `fk_product_color_idx` (`color`),
   KEY `fk_product_origin_idx` (`origin`),
   KEY `fk_product_image_idx` (`image`),
+  FULLTEXT KEY `ft_product_name` (`name`),
   CONSTRAINT `fk_product_brand` FOREIGN KEY (`brand`) REFERENCES `brand` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_product_color` FOREIGN KEY (`color`) REFERENCES `color` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_product_image` FOREIGN KEY (`image`) REFERENCES `image_info` (`id`) ON UPDATE CASCADE,
@@ -316,6 +317,50 @@ LOCK TABLES `product_attribute` WRITE;
 INSERT INTO `product_attribute` VALUES (1,'Brand'),(4,'Color'),(2,'Origin'),(5,'Packing Type'),(3,'Size');
 /*!40000 ALTER TABLE `product_attribute` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `product_search`
+--
+
+DROP TABLE IF EXISTS `product_search`;
+/*!50001 DROP VIEW IF EXISTS `product_search`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `product_search` AS SELECT 
+ 1 AS `id`,
+ 1 AS `name`,
+ 1 AS `unit`,
+ 1 AS `code`,
+ 1 AS `brand`,
+ 1 AS `origin`,
+ 1 AS `size`,
+ 1 AS `color`,
+ 1 AS `description`,
+ 1 AS `image`,
+ 1 AS `search_name`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `product_view`
+--
+
+DROP TABLE IF EXISTS `product_view`;
+/*!50001 DROP VIEW IF EXISTS `product_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `product_view` AS SELECT 
+ 1 AS `id`,
+ 1 AS `name`,
+ 1 AS `unit`,
+ 1 AS `code`,
+ 1 AS `brand`,
+ 1 AS `origin`,
+ 1 AS `size`,
+ 1 AS `color`,
+ 1 AS `description`,
+ 1 AS `image`,
+ 1 AS `image_file`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `province`
@@ -491,7 +536,7 @@ CREATE TABLE `store_product_group` (
 
 LOCK TABLES `store_product_group` WRITE;
 /*!40000 ALTER TABLE `store_product_group` DISABLE KEYS */;
-INSERT INTO `store_product_group` VALUES (1,1,'Công nghệ',NULL),(2,1,'Đồ dùng',NULL),(3,1,'Hóa mỹ phẩm',NULL),(4,1,'May mặc',NULL),(5,1,'Tươi sống',NULL),(6,1,'Bánh kẹo',1),(7,1,'Dầu ăn - nước chấm',1),(8,1,'Đông lạnh',1),(9,1,'Gia vị - hạt nêm',1),(10,1,'Mì - bún - cháo - nui',1),(11,1,'Nước uống - rượu bia',1),(12,1,'Sản phẩm đóng gói',1),(13,1,'Sữa - bột',1),(14,1,'Dụng cụ',2),(15,1,'Điện',2),(16,1,'Gia đình',2),(17,1,'Nhà bếp',2),(18,1,'Nhựa',2),(19,1,'Bột giặt - nước xả',3),(20,1,'Chất tẩy rửa',3),(21,1,'Dầu gội -  sữa tắm',3),(22,1,'Đồ em bé',3),(23,1,'Giấy - khăn',3),(24,1,'Mỹ phẩm',3),(25,1,'Vệ sinh cá nhân',3),(26,1,'Đồng phục học sinh',4),(27,1,'Khẩu trang',4),(28,1,'Thời trang nam',4),(29,1,'Thời trang nữ',4),(30,1,'Tổng hợp',4),(31,1,'Bánh mì',5),(32,1,'Gia cầm',5),(33,1,'Hải sản',5),(34,1,'Hoa tươi',5),(35,1,'Rau - củ - quả',5),(36,1,'Thịt - Cá',5),(37,1,'Thực phẩm đóng gói',5),(38,1,'Thực phẩm nấu chín',5),(39,1,'Thực phẩm sơ chế',5),(40,1,'Trái cây',5),(41,1,'Trứng vịt - gà - cút',5),(42,1,'Bánh - snack',6),(43,1,'Dầu ăn - Dầu hào',7),(44,1,'Nước mắm',7),(45,1,'Trứng vịt',41),(46,1,'Cá',36),(47,1,'Nước Giặt',19),(48,1,'Nước - Gel Rửa Tay',25),(51,2,'Đồ dùng',0),(52,2,'Công nghệ',0),(53,2,'May mặc',0),(54,2,'Đồ điện',51),(55,2,'Thực phẩm',0),(56,2,'Bánh kẹo',55),(57,2,'Áo quần',53),(58,2,'Giày dép',53);
+INSERT INTO `store_product_group` VALUES (1,1,'Công nghệ',NULL),(2,1,'Đồ dùng',NULL),(3,1,'Hóa mỹ phẩm',NULL),(4,1,'May mặc',NULL),(5,1,'Tươi sống',NULL),(6,1,'Bánh kẹo',1),(7,1,'Dầu ăn - nước chấm',1),(8,1,'Đông lạnh',1),(9,1,'Gia vị - hạt nêm',1),(10,1,'Mì - bún - cháo - nui',1),(11,1,'Nước uống - rượu bia',1),(12,1,'Sản phẩm đóng gói',1),(13,1,'Sữa - bột',1),(14,1,'Dụng cụ',2),(15,1,'Điện',2),(16,1,'Gia đình',2),(17,1,'Nhà bếp',2),(18,1,'Nhựa',2),(19,1,'Bột giặt - nước xả',3),(20,1,'Chất tẩy rửa',3),(21,1,'Dầu gội -  sữa tắm',3),(22,1,'Đồ em bé',3),(23,1,'Giấy - khăn',3),(24,1,'Mỹ phẩm',3),(25,1,'Vệ sinh cá nhân',3),(26,1,'Đồng phục học sinh',4),(27,1,'Khẩu trang',4),(28,1,'Thời trang nam',4),(29,1,'Thời trang nữ',4),(30,1,'Tổng hợp',4),(31,1,'Bánh mì',5),(32,1,'Gia cầm',5),(33,1,'Hải sản',5),(34,1,'Hoa tươi',5),(35,1,'Rau - củ - quả',5),(36,1,'Thịt - Cá',5),(37,1,'Thực phẩm đóng gói',5),(38,1,'Thực phẩm nấu chín',5),(39,1,'Thực phẩm sơ chế',5),(40,1,'Trái cây',5),(41,1,'Trứng vịt - gà - cút',5),(42,1,'Bánh - snack',6),(43,1,'Dầu ăn - Dầu hào',7),(44,1,'Nước mắm',7),(45,1,'Trứng vịt',41),(46,1,'Cá',36),(47,1,'Nước Giặt',19),(48,1,'Nước - Gel Rửa Tay',25),(51,2,'Đồ dùng',0),(52,2,'Công nghệ 2',0),(53,2,'May mặc 2',0),(54,2,'Đồ điện',51),(55,2,'Thực phẩm 2',0),(56,2,'Bánh kẹo',55),(57,2,'Áo quần',53),(58,2,'Giày dép',53);
 /*!40000 ALTER TABLE `store_product_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -632,6 +677,42 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `product_search`
+--
+
+/*!50001 DROP VIEW IF EXISTS `product_search`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `product_search` AS select `product`.`id` AS `id`,`product`.`name` AS `name`,`product`.`unit` AS `unit`,`product`.`code` AS `code`,`product`.`brand` AS `brand`,`product`.`origin` AS `origin`,`product`.`size` AS `size`,`product`.`color` AS `color`,`product`.`description` AS `description`,`product`.`image` AS `image`,`remove_accents`(`product`.`name`) AS `search_name` from `product` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `product_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `product_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `product_view` AS select `p`.`id` AS `id`,`p`.`name` AS `name`,`p`.`unit` AS `unit`,`p`.`code` AS `code`,`p`.`brand` AS `brand`,`p`.`origin` AS `origin`,`p`.`size` AS `size`,`p`.`color` AS `color`,`p`.`description` AS `description`,`p`.`image` AS `image`,`i`.`file_name` AS `image_file` from (`product` `p` join `image_info` `i` on((`p`.`image` = `i`.`id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `store_product_group_view`
 --
 
@@ -676,4 +757,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-10-03  4:28:57
+-- Dump completed on 2021-10-25  4:01:09
