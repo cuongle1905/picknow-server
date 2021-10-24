@@ -40,6 +40,9 @@
     <div id="removeIconButton"></div>
 </div>
 <script>
+    var productForm;
+    var searchName;
+    var timerId;
     $(function () {
         $("#add-product-button").dxButton({
             icon: "add",
@@ -58,8 +61,9 @@
         $("#popupDiv").dxPopup({
             visible: true,
             title: 'Add Product',
-            minwidth: 500,
-            minheight: 500,
+            minwidth: 600,
+            minheight: 600,
+            width: "90%",
             position: {
                 my: 'center',
                 at: 'center',
@@ -67,8 +71,16 @@
             },
             dragEnabled: true,
             contentTemplate: function (e) {
-                var formContainer = $("<div id='subForm'>");
-                myNewCustomerForm = formContainer.dxForm({
+                var popupContent = $("<div id='popup-content' class='container'></div>")
+                var row = $("<div class='row'></div>")
+                popupContent.append(row)
+                var leftCol = $("<div class='col-8'></div>")
+                row.append(leftCol)
+                var rightCol = $("<div id='divSearchProduct' class='col-4'>Hellow world</div>")
+                row.append(rightCol)
+
+                var formContainer = $("<div id='subForm'></div>");
+                productForm = formContainer.dxForm({
                     //formData: product,
                     readOnly: false,
                     showColonAfterLabel: false,
@@ -80,12 +92,36 @@
                             itemType: "group",
                             //caption: "Product Information",
                             colCount: 2,
-                            //items: ["Id", "Name", "Unit", "Code", "Brand", "Origin", "Size", "Color", "Description", "Image"]
                             items: [
                                 {
                                     dataField: "Name",
                                     label: { text: "Name" },
                                     editorOptions: {
+                                        valueChangeEvent: "input",
+                                        onValueChanged: function (data) {
+                                            console.log("Name changed: " + data.value);
+                                            if (data.value.length < 3)
+                                                return;
+
+                                            searchName = data.value;
+                                            clearTimeout(timerId)
+                                            timerId = setTimeout(function () {
+                                                if (searchName == data.value) {
+                                                    console.log("Search name: " + searchName)
+                                                    $.ajax({
+                                                        url: '@Url.Action("Get", "ProductViews")',
+                                                        method: "GET",
+                                                        dataType: "json",
+                                                        data: { name: searchName },
+                                                        success: function (result) {
+                                                            console.log(result);
+                                                            displayProductSearchResult(result);
+                                                            //$("#divSearchProduct").html(result);
+                                                        }
+                                                    });
+                                                }
+                                            }, 500);
+                                        }
                                     },
                                     validationRules: [{
                                         type: "required",
@@ -93,10 +129,11 @@
                                     }]
                                 },
                                 {
-                                    dataField: "StoreProductGroup",
-                                    label: { text: "Group" },
-                                    editorType: "dxLookup",
-                                    editorOptions: {}
+                                    itemType: "empty"
+                                    //dataField: "StoreProductGroup",
+                                    //label: { text: "Group" },
+                                    //editorType: "dxLookup",
+                                    //editorOptions: {}
                                 }
                             ]
                         }, {
@@ -117,12 +154,29 @@
                         }
                     ]
                 }).dxForm("instance");
-                e.append(formContainer);
+
+                leftCol.append(formContainer)
+                e.append(popupContent)
 
                 $("#popupForm").on("submit", function (e) {
                     alert('#popupForm submit pressed');
                 });
             }
         });
+    }
+
+    function displayProductSearchResult(products) {
+        var output = "<div class='container'>";
+        products.forEach(function (product) {
+            var name = product["Name"];
+            var imageFile = product["ImageFile"];
+            if (imageFile == undefined)
+                imageFile = "photo.png";
+
+            output = output + "<div class='row align-items-center'><div class='col-3 pl-0 pr-0'><img class='image_thumb' src='/data_images/" + imageFile + "'/></div>";
+            output = output + "<div class='col-9 pl-1 pr-0'>" + name + "</div></div>";
+        });
+        output = output + "</div>";
+        $("#divSearchProduct").html(output);
     }
 </script>

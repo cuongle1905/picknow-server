@@ -66,7 +66,7 @@ body {
     z-index: 10;
 }
 
-.item_product_main .image_thumb {
+.image_thumb {
     width: 100%;
     height: auto;
 }

@@ -11,16 +11,15 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using GetNowServer.Models;
-using MySql.Data.EntityFrameworkCore;
 
 namespace GetNowServer.Controllers
 {
     [Route("api/[controller]/[action]")]
-    public class ProductsController : Controller
+    public class ProductViewsController : Controller
     {
         private MyDbContext _context;
 
-        public ProductsController(MyDbContext context) {
+        public ProductViewsController(MyDbContext context) {
             _context = context;
         }
 
@@ -28,13 +27,13 @@ namespace GetNowServer.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string name)
         {
-            var products = _context.Products.FromSqlRaw("call proc_search_product({0});", name); //.Where(i => i.Name.Contains(name)).Take(20);
+            var products = _context.ProductViews.FromSqlRaw("call proc_search_product({0});", name); //.Where(i => i.Name.Contains(name)).Take(20);
             return Json(await products.ToListAsync());
         }
 
         //[HttpGet]
         //public async Task<IActionResult> Get(DataSourceLoadOptions loadOptions) {
-        //    var products = _context.Products.Select(i => new {
+        //    var productviews = _context.ProductViews.Select(i => new {
         //        i.Id,
         //        i.Name,
         //        i.Unit,
@@ -43,7 +42,9 @@ namespace GetNowServer.Controllers
         //        i.Origin,
         //        i.Size,
         //        i.Color,
-        //        i.Description
+        //        i.Description,
+        //        i.Image,
+        //        i.ImageFile
         //    });
 
         //    // If you work with a large amount of data, consider specifying the PaginateViaPrimaryKey and PrimaryKey properties.
@@ -52,19 +53,19 @@ namespace GetNowServer.Controllers
         //    // loadOptions.PrimaryKey = new[] { "Id" };
         //    // loadOptions.PaginateViaPrimaryKey = true;
 
-        //    return Json(await DataSourceLoader.LoadAsync(products, loadOptions));
+        //    return Json(await DataSourceLoader.LoadAsync(productviews, loadOptions));
         //}
 
         [HttpPost]
         public async Task<IActionResult> Post(string values) {
-            var model = new Product();
+            var model = new ProductView();
             var valuesDict = JsonConvert.DeserializeObject<IDictionary>(values);
             PopulateModel(model, valuesDict);
 
             if(!TryValidateModel(model))
                 return BadRequest(GetFullErrorMessage(ModelState));
 
-            var result = _context.Products.Add(model);
+            var result = _context.ProductViews.Add(model);
             await _context.SaveChangesAsync();
 
             return Json(new { result.Entity.Id });
@@ -72,7 +73,7 @@ namespace GetNowServer.Controllers
 
         [HttpPut]
         public async Task<IActionResult> Put(long key, string values) {
-            var model = await _context.Products.FirstOrDefaultAsync(item => item.Id == key);
+            var model = await _context.ProductViews.FirstOrDefaultAsync(item => item.Id == key);
             if(model == null)
                 return StatusCode(409, "Object not found");
 
@@ -88,78 +89,25 @@ namespace GetNowServer.Controllers
 
         [HttpDelete]
         public async Task Delete(long key) {
-            var model = await _context.Products.FirstOrDefaultAsync(item => item.Id == key);
+            var model = await _context.ProductViews.FirstOrDefaultAsync(item => item.Id == key);
 
-            _context.Products.Remove(model);
+            _context.ProductViews.Remove(model);
             await _context.SaveChangesAsync();
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> BrandsLookup(DataSourceLoadOptions loadOptions) {
-            var lookup = from i in _context.Brands
-                         orderby i.Name
-                         select new {
-                             Value = i.Id,
-                             Text = i.Name
-                         };
-            return Json(await DataSourceLoader.LoadAsync(lookup, loadOptions));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ColorsLookup(DataSourceLoadOptions loadOptions) {
-            var lookup = from i in _context.Colors
-                         orderby i.Name
-                         select new {
-                             Value = i.Id,
-                             Text = i.Name
-                         };
-            return Json(await DataSourceLoader.LoadAsync(lookup, loadOptions));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> OriginsLookup(DataSourceLoadOptions loadOptions) {
-            var lookup = from i in _context.Origins
-                         orderby i.Name
-                         select new {
-                             Value = i.Id,
-                             Text = i.Name
-                         };
-            return Json(await DataSourceLoader.LoadAsync(lookup, loadOptions));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> SizesLookup(DataSourceLoadOptions loadOptions) {
-            var lookup = from i in _context.Sizes
-                         orderby i.Name
-                         select new {
-                             Value = i.Id,
-                             Text = i.Name
-                         };
-            return Json(await DataSourceLoader.LoadAsync(lookup, loadOptions));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> UnitsLookup(DataSourceLoadOptions loadOptions) {
-            var lookup = from i in _context.Units
-                         orderby i.Name
-                         select new {
-                             Value = i.Id,
-                             Text = i.Name
-                         };
-            return Json(await DataSourceLoader.LoadAsync(lookup, loadOptions));
-        }
-
-        private void PopulateModel(Product model, IDictionary values) {
-            string ID = nameof(Product.Id);
-            string NAME = nameof(Product.Name);
-            string UNIT = nameof(Product.Unit);
-            string CODE = nameof(Product.Code);
-            string BRAND = nameof(Product.Brand);
-            string ORIGIN = nameof(Product.Origin);
-            string SIZE = nameof(Product.Size);
-            string COLOR = nameof(Product.Color);
-            string DESCRIPTION = nameof(Product.Description);
+        private void PopulateModel(ProductView model, IDictionary values) {
+            string ID = nameof(ProductView.Id);
+            string NAME = nameof(ProductView.Name);
+            string UNIT = nameof(ProductView.Unit);
+            string CODE = nameof(ProductView.Code);
+            string BRAND = nameof(ProductView.Brand);
+            string ORIGIN = nameof(ProductView.Origin);
+            string SIZE = nameof(ProductView.Size);
+            string COLOR = nameof(ProductView.Color);
+            string DESCRIPTION = nameof(ProductView.Description);
+            string IMAGE = nameof(ProductView.Image);
+            string IMAGE_FILE = nameof(ProductView.ImageFile);
 
             if(values.Contains(ID)) {
                 model.Id = Convert.ToInt64(values[ID]);
@@ -195,6 +143,14 @@ namespace GetNowServer.Controllers
 
             if(values.Contains(DESCRIPTION)) {
                 model.Description = Convert.ToString(values[DESCRIPTION]);
+            }
+
+            if(values.Contains(IMAGE)) {
+                model.Image = values[IMAGE] != null ? Convert.ToInt32(values[IMAGE]) : (int?)null;
+            }
+
+            if(values.Contains(IMAGE_FILE)) {
+                model.ImageFile = Convert.ToString(values[IMAGE_FILE]);
             }
         }
 

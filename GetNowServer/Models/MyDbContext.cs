@@ -24,6 +24,8 @@ namespace GetNowServer.Models
         public virtual DbSet<Origin> Origins { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductAttribute> ProductAttributes { get; set; }
+        public virtual DbSet<ProductSearch> ProductSearches { get; set; }
+        public virtual DbSet<ProductView> ProductViews { get; set; }
         public virtual DbSet<Province> Provinces { get; set; }
         public virtual DbSet<Size> Sizes { get; set; }
         public virtual DbSet<Store> Stores { get; set; }
@@ -40,7 +42,6 @@ namespace GetNowServer.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseMySql("server=localhost;port=3306;database=picknow;user=root;password=root;persist security info=False;connect timeout=300", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.25-mysql"));
             }
         }
@@ -302,10 +303,11 @@ namespace GetNowServer.Models
 
                 entity.HasIndex(e => e.Unit, "fk_product_unit_idx");
 
-                entity.HasIndex(e => e.Code, "idx_product_code");
+                entity.HasIndex(e => e.Name, "ft_product_name")
+                    .IsUnique()
+                    .HasAnnotation("MySql:FullTextIndex", true);
 
-                entity.HasIndex(e => e.Name, "uniq_product_name")
-                    .IsUnique();
+                entity.HasIndex(e => e.Code, "idx_product_code");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever()
@@ -389,6 +391,90 @@ namespace GetNowServer.Models
                     .HasColumnName("name")
                     .UseCollation("utf8_bin")
                     .HasCharSet("utf8");
+            });
+
+            modelBuilder.Entity<ProductSearch>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("product_search");
+
+                entity.Property(e => e.Brand).HasColumnName("brand");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(45)
+                    .HasColumnName("code");
+
+                entity.Property(e => e.Color).HasColumnName("color");
+
+                entity.Property(e => e.Description)
+                    .HasColumnType("text")
+                    .HasColumnName("description")
+                    .UseCollation("utf8_bin")
+                    .HasCharSet("utf8");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Image).HasColumnName("image");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Origin)
+                    .HasColumnName("origin")
+                    .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.SearchName)
+                    .HasColumnType("text")
+                    .HasColumnName("search_name");
+
+                entity.Property(e => e.Size).HasColumnName("size");
+
+                entity.Property(e => e.Unit).HasColumnName("unit");
+            });
+
+            modelBuilder.Entity<ProductView>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("product_view");
+
+                entity.Property(e => e.Brand).HasColumnName("brand");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(45)
+                    .HasColumnName("code");
+
+                entity.Property(e => e.Color).HasColumnName("color");
+
+                entity.Property(e => e.Description)
+                    .HasColumnType("text")
+                    .HasColumnName("description")
+                    .UseCollation("utf8_bin")
+                    .HasCharSet("utf8");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Image).HasColumnName("image");
+
+                entity.Property(e => e.ImageFile)
+                    .HasMaxLength(45)
+                    .HasColumnName("image_file");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Origin)
+                    .HasColumnName("origin")
+                    .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.Size).HasColumnName("size");
+
+                entity.Property(e => e.Unit).HasColumnName("unit");
             });
 
             modelBuilder.Entity<Province>(entity =>
