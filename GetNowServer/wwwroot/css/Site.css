@@ -70,6 +70,10 @@ body {
     width: 100%;
     height: auto;
 }
+.image_thumb_30 {
+    width: 30%;
+    height: auto;
+}
 
 .text-link {
     overflow: hidden;

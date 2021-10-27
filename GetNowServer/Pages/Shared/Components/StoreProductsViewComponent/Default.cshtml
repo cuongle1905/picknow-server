@@ -43,6 +43,7 @@
     var productForm;
     var searchName;
     var timerId;
+    var selectedProductIds = [0];
     $(function () {
         $("#add-product-button").dxButton({
             icon: "add",
@@ -71,12 +72,12 @@
             },
             dragEnabled: true,
             contentTemplate: function (e) {
-                var popupContent = $("<div id='popup-content' class='container'></div>")
-                var row = $("<div class='row'></div>")
+                var popupContent = $("<div id='popup-content' class='container mh-100'></div>")
+                var row = $("<div class='row h-100'></div>")
                 popupContent.append(row)
                 var leftCol = $("<div class='col-8'></div>")
                 row.append(leftCol)
-                var rightCol = $("<div id='divSearchProduct' class='col-4'>Hellow world</div>")
+                var rightCol = $("<div class='col-4'><div class='product-list'><div class='font-weight-bold'>Existing products:</div><div id='divSearchProduct'></div></div></div>")
                 row.append(rightCol)
 
                 var formContainer = $("<div id='subForm'></div>");
@@ -96,6 +97,7 @@
                                 {
                                     dataField: "Name",
                                     label: { text: "Name" },
+                                    dataField: "Name",
                                     editorOptions: {
                                         valueChangeEvent: "input",
                                         onValueChanged: function (data) {
@@ -116,7 +118,6 @@
                                                         success: function (result) {
                                                             console.log(result);
                                                             displayProductSearchResult(result);
-                                                            //$("#divSearchProduct").html(result);
                                                         }
                                                     });
                                                 }
@@ -129,11 +130,60 @@
                                     }]
                                 },
                                 {
-                                    itemType: "empty"
-                                    //dataField: "StoreProductGroup",
+                                    label: { text: "Code" },
+                                    dataField: "Code",
                                     //label: { text: "Group" },
                                     //editorType: "dxLookup",
                                     //editorOptions: {}
+                                },
+                                {
+                                    dataField: "Unit",
+                                    editorType: "dxAutocomplete",
+                                    label: { text: "Unit" },
+                                    editorOptions: {
+                                        minSearchLength: 1,
+                                        dataSource: units,
+                                        valueExpr: "Name",
+                                        searchExpr: "NameSearch"
+                                    },
+                                    validationRules: [{
+                                        type: "required",
+                                        message: "Unit is required"
+                                    }]
+                                },
+                                {
+                                    dataField: "Brand",
+                                    editorType: "dxAutocomplete",
+                                    label: { text: "Brand" },
+                                    editorOptions: {
+                                        minSearchLength: 1,
+                                        dataSource: brands,
+                                        valueExpr: "Name",
+                                        searchExpr: "NameSearch"
+                                    }
+                                },
+                                {
+                                    dataField: "Origin",
+                                    editorType: "dxAutocomplete",
+                                    label: { text: "Origin" },
+                                    editorOptions: {
+                                        minSearchLength: 1,
+                                        dataSource: origins,
+                                        valueExpr: "Name",
+                                        searchExpr: "NameSearch"
+                                    },
+                                    value: origins[0]["Name"]
+                                },
+                                {
+                                    dataField: "Size",
+                                    editorType: "dxAutocomplete",
+                                    label: { text: "Size" },
+                                    editorOptions: {
+                                        minSearchLength: 1,
+                                        dataSource: sizes,
+                                        valueExpr: "Name",
+                                        searchExpr: "NameSearch"
+                                    }
                                 }
                             ]
                         }, {
@@ -158,6 +208,11 @@
                 leftCol.append(formContainer)
                 e.append(popupContent)
 
+                var originEditor = productForm.getEditor("Origin");
+                originEditor.option("value", origins[0]["Name"]);
+
+
+
                 $("#popupForm").on("submit", function (e) {
                     alert('#popupForm submit pressed');
                 });
@@ -166,17 +221,57 @@
     }
 
     function displayProductSearchResult(products) {
-        var output = "<div class='container'>";
-        products.forEach(function (product) {
-            var name = product["Name"];
-            var imageFile = product["ImageFile"];
-            if (imageFile == undefined)
-                imageFile = "photo.png";
+        var newProduct = []
+        newProduct["Id"] = 0;
+        newProduct["Name"] = "New Product";
+        products.splice(0, 0, newProduct);
 
-            output = output + "<div class='row align-items-center'><div class='col-3 pl-0 pr-0'><img class='image_thumb' src='/data_images/" + imageFile + "'/></div>";
-            output = output + "<div class='col-9 pl-1 pr-0'>" + name + "</div></div>";
-        });
-        output = output + "</div>";
-        $("#divSearchProduct").html(output);
+        var list = $("#divSearchProduct").dxList({
+            dataSource: products,
+            selectedItemKeys: selectedProductIds,
+            selectionMode: "single",
+            height: "100%",
+            keyExpr: "Id",
+            itemTemplate: function (data, index) {
+                var result = $("<div>").addClass("product");
+                result.text(data.Name);
+                var imageFile = data.ImageFile;
+                if (imageFile == undefined)
+                    imageFile = "photo.png";
+
+                //var row = $("<div").addClass("row align-items-center");
+                //row.appendTo(result);
+
+                //var col3 = $("<div>").addClass("col-3 pl-0 pr-0");
+                //col3.appendTo(row);
+                $("<img>").attr("src", "/data_images/" + imageFile).prependTo(result);
+
+                //var col9 = $("<div>").addClass("col-9 pl-1 pr-0");
+                //col9.appendTo(row);
+                //$("<div>").text(data.Name).appendTo(result);
+                //$("<div>").addClass("price")
+                //    .html(formatCurrency(data.Price)).appendTo(result);
+
+                return result;
+            },
+            onSelectionChanged: function (e) {
+                selectedProductIds = e.addedItems.map(i => i.Id);
+            }
+        }).dxList("instance");
+
+        list.option("selectedItemKeys", selectedProductIds);
+
+        //var output = "<div class='container'>";
+        //products.forEach(function (product) {
+        //    var name = product["Name"];
+        //    var imageFile = product["ImageFile"];
+        //    if (imageFile == undefined)
+        //        imageFile = "photo.png";
+
+        //    output = output + "<div class='row align-items-center'><div class='col-3 pl-0 pr-0'><img class='image_thumb' src='/data_images/" + imageFile + "'/></div>";
+        //    output = output + "<div class='col-9 pl-1 pr-0'>" + name + "</div></div>";
+        //});
+        //output = output + "</div>";
+        //$("#divSearchProduct").html(output);
     }
 </script>

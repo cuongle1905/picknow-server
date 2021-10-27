@@ -82,6 +82,50 @@
         background-color: #3987cc;
         text-decoration: none;
     }
+    #divSearchProduct {
+        border-left: 1px solid #808080;
+    }
+
+    /*.list-container {
+        min-height: 100px;
+        height: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+    }*/
+    #popup-content {
+        height: 100%;
+    }
+    .product-list {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+    }
+    .product {
+        width: 100% !important;
+        height: 50px;
+        vertical-align: top;
+        line-height: 50px;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .product > img {
+        height: 100%;
+        width: 50px;
+        margin-right: 8px;
+    }
+/*    .product > div {
+        padding-left: 10px;
+        vertical-align: top;
+        line-height: 64px;
+        font-size: 15px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        flex-grow: 1;
+        flex-shrink: 1;
+    }*/
 </style>
 <h3 class="content-block mb-3">Store Products</h3>
 <script>
@@ -209,9 +253,64 @@
 
 <script>
     var treeList;
-
     var optionsData;
     var storeProductGroups = [];
+    var units = [];
+    var brands = [];
+    var origins = [];
+    var sizes = [];
+    $(function () {
+        getUnits();
+        getBrands();
+        getOrigins();
+        getSizes();
+    });
+    function getUnits() {
+        $.ajax({
+            url: '@Url.Action("Get", "Units")',
+            method: "GET",
+            dataType: "json",
+            success: function (result) {
+                console.log("Got units: " + result);
+                units = result;
+                addNameSearchColumn(units);
+            }
+        });
+    }
+    function getBrands() {
+        $.ajax({
+            url: '@Url.Action("Get", "Brands")',
+            method: "GET",
+            dataType: "json",
+            success: function (result) {
+                brands = result;
+                addNameSearchColumn(brands);
+            }
+        });
+    }
+    function getOrigins() {
+        $.ajax({
+            url: '@Url.Action("Get", "Origins")',
+            method: "GET",
+            dataType: "json",
+            success: function (result) {
+                origins = result;
+                addNameSearchColumn(origins);
+            }
+        });
+    }
+    function getSizes() {
+        $.ajax({
+            url: '@Url.Action("Get", "Sizes")',
+            method: "GET",
+            dataType: "json",
+            success: function (result) {
+                sizes = result;
+                addNameSearchColumn(sizes);
+            }
+        });
+    }
+
     function getStoreGroups() {
         return getDataSource(myDataSource, "StoreGroups", '@Url.Action("Get", "StoreGroups")');
     }

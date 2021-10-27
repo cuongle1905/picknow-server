@@ -64,7 +64,7 @@ function addNameSearchColumn(data) {
         var name = item["Name"];
         var name2 = nonAccentVietnamese(name);
         console.log("addNonAccentColumn: " + name + " -> " + name2)
-        item["NameSearch"] = name2;
+        item["NameSearch"] = name2 + "; " + name;
     });
 }
 function numberWithCommas(x) {
