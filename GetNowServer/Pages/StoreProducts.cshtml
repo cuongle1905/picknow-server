@@ -55,6 +55,15 @@
         color: #337ab7;
     }
 
+    .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-list-item-selected {
+        background-color: #337ab7;
+        color: #fff;
+    }
+    .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-state-focused.dx-list-item-selected {
+        background-color: #337ab7;
+        color: #fff;
+    }
+
     .myButton {
         font-size: 1.1rem;
         padding: 0 2px;
@@ -82,10 +91,6 @@
         background-color: #3987cc;
         text-decoration: none;
     }
-    #divSearchProduct {
-        border-left: 1px solid #808080;
-    }
-
     /*.list-container {
         min-height: 100px;
         height: auto;
@@ -111,10 +116,17 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    .product > img {
+    .product > img, .product > .add-product {
         height: 100%;
         width: 50px;
         margin-right: 8px;
+    }
+    .product > .add-product {
+        float: left;
+        font-size: 32px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 44px;
     }
 /*    .product > div {
         padding-left: 10px;
@@ -132,7 +144,9 @@
     selectedMenuItemId = "#ni-storeproductgroups"
     var myDataSource = {};
     var storeGroupId = 1;
-    var selectedGroupId;
+    var storeGroupName;
+    var storeProductGroupId;
+    var storeProductGroupName;
 </script>
 <div id="editDivContainer" style="display: none">
     <div id="editDiv" class="pl-3">
@@ -159,6 +173,7 @@
                         .OnValueChanged("lookup_valueChanged")
                         .ShowCancelButton(false)
                         .SearchExpr(new string[] { "Name", "NameSearch" })
+                        .OnInitialized("onInitializedLookup")
                     )
                 </div>
             </div>
@@ -252,6 +267,7 @@
 <div id="popupDiv"></div>
 
 <script>
+    var storeGroupLookup;
     var treeList;
     var optionsData;
     var storeProductGroups = [];
@@ -314,7 +330,13 @@
     function getStoreGroups() {
         return getDataSource(myDataSource, "StoreGroups", '@Url.Action("Get", "StoreGroups")');
     }
+    function onInitializedLookup(e) {
+        console.log("onInitializedLookup");
+        storeGroupLookup = e.component;
+        console.log(storeGroupLookup);
+    }
     function lookup_valueChanged(e) {
+        console.log("lookup_valueChanged");
         if (storeGroupId != e.value) {
             console.log("Store Group selected: " + e.value);
             storeGroupId = e.value;
@@ -362,30 +384,37 @@
     }
     function displayProducts(productGroupId) {
         //alert("display products for group: " + productGroupId)
+        storeGroupName = storeGroupLookup.option("selectedItem").Name;
+        console.log("Store Group: " + storeGroupName);
+
         $.ajax({
             url: '@Url.Action("StoreProducts", "ViewComponent")',
             method: "GET",
             dataType: "html",
             data: { storeGroup: storeGroupId, storeProductGroup: productGroupId },
             success: function (result) {
-                console.log(result);
+                //console.log(result);
                 $("#productsdiv").html(result);
+            },
+            error: function (xhr, status, error) {
+                $("#productsdiv").html("No products found.");
             }
         });
     }
     function onSelectionChanged(e) {
         var selectedData = e.component.getSelectedRowsData("all");
         if (selectedData.length > 0) {
-            selectedGroupId = selectedData[0].Id;
-            displayProducts(selectedGroupId);
+            storeProductGroupId = selectedData[0].Id;
+            storeProductGroupName = selectedData[0].Name;
+            displayProducts(storeProductGroupId);
             showEditDiv();
-            treeList.expandRow(selectedGroupId);
+            treeList.expandRow(storeProductGroupId);
         } else {
-            selectedGroupId = 0;
+            storeProductGroupId = 0;
         }
     }
     function showEditDiv() {
-        var targetDivId = 'productGroupCellDiv' + selectedGroupId;
+        var targetDivId = 'productGroupCellDiv' + storeProductGroupId;
         var targetDiv = document.getElementById(targetDivId);
         if (targetDiv == undefined)
             return;
@@ -401,24 +430,24 @@
     }
     function onContentReady(e) {
         console.log("onContentReady");
-        if (selectedGroupId != undefined)
+        if (storeProductGroupId != undefined)
             showEditDiv();
     }
     function addData() {
-        if (selectedGroupId != undefined) {
-            treeList.addRow(selectedGroupId);
+        if (storeProductGroupId != undefined) {
+            treeList.addRow(storeProductGroupId);
         }
     }
     function editData() {
-        if (selectedGroupId != undefined) {
-            var rowIndex = treeList.getRowIndexByKey(selectedGroupId)
+        if (storeProductGroupId != undefined) {
+            var rowIndex = treeList.getRowIndexByKey(storeProductGroupId)
             if (rowIndex != undefined)
                 treeList.editRow(rowIndex);
         }
     }
     function deleteData() {
-        if (selectedGroupId != undefined) {
-            var rowIndex = treeList.getRowIndexByKey(selectedGroupId)
+        if (storeProductGroupId != undefined) {
+            var rowIndex = treeList.getRowIndexByKey(storeProductGroupId)
             if (rowIndex != undefined)
                 treeList.deleteRow(rowIndex);
         }

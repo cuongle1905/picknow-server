@@ -35,7 +35,7 @@ function getConvertedTextForColumn(rowData) {
 }
 
 function getDataSource(dataSource, category, url, filterAttribute, optionsData) {
-    console.log("getDataSource.");
+    console.log("getDataSource for " + category);
     if (dataSource[category] == undefined) {
         console.log("Load " + category + " from server.");
         return {
@@ -63,7 +63,7 @@ function addNameSearchColumn(data) {
     data.forEach(function (item) {
         var name = item["Name"];
         var name2 = nonAccentVietnamese(name);
-        console.log("addNonAccentColumn: " + name + " -> " + name2)
+        //console.log("addNonAccentColumn: " + name + " -> " + name2)
         item["NameSearch"] = name2 + "; " + name;
     });
 }
@@ -168,3 +168,11 @@ function showChangeIconPopover(dataId, fileUploaderId, popupContainerId) {
         return this.closest(parentId).length > 0;
     }
 })(jQuery)
+
+function getName(itemId, items) {
+    for (item of items) {
+        if (item.Id == itemId)
+            return item.Name;
+    }
+    return "";
+}

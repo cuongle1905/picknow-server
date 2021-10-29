@@ -43,7 +43,8 @@
     var productForm;
     var searchName;
     var timerId;
-    var selectedProductIds = [0];
+    var selectedProductId = 0;
+    var selectedProduct;
     $(function () {
         $("#add-product-button").dxButton({
             icon: "add",
@@ -58,10 +59,9 @@
     });
 
     function addProduct() {
-        //var product = @Html.Raw(Json.Serialize(@Model[0]));
         $("#popupDiv").dxPopup({
             visible: true,
-            title: 'Add Product',
+            title: 'Add Product: ' + storeGroupName + ' > ' + storeProductGroupName,
             minwidth: 600,
             minheight: 600,
             width: "90%",
@@ -75,9 +75,9 @@
                 var popupContent = $("<div id='popup-content' class='container mh-100'></div>")
                 var row = $("<div class='row h-100'></div>")
                 popupContent.append(row)
-                var leftCol = $("<div class='col-8'></div>")
+                var leftCol = $("<div class='col-4 pl-0 pr-0' style='background-color: #f8f8f8'><div class='product-list'><div id='divSearchProduct'></div></div></div>")
                 row.append(leftCol)
-                var rightCol = $("<div class='col-4'><div class='product-list'><div class='font-weight-bold'>Existing products:</div><div id='divSearchProduct'></div></div></div>")
+                var rightCol = $("<div class='col-8'></div>")
                 row.append(rightCol)
 
                 var formContainer = $("<div id='subForm'></div>");
@@ -91,13 +91,13 @@
                     items: [
                         {
                             itemType: "group",
-                            //caption: "Product Information",
+                            name: "ProductInfo",
+                            caption: "New Product Info",
                             colCount: 2,
                             items: [
                                 {
                                     dataField: "Name",
                                     label: { text: "Name" },
-                                    dataField: "Name",
                                     editorOptions: {
                                         valueChangeEvent: "input",
                                         onValueChanged: function (data) {
@@ -114,7 +114,7 @@
                                                         url: '@Url.Action("Get", "ProductViews")',
                                                         method: "GET",
                                                         dataType: "json",
-                                                        data: { name: searchName },
+                                                        data: { name: searchName, storeGroupId: storeGroupId },
                                                         success: function (result) {
                                                             console.log(result);
                                                             displayProductSearchResult(result);
@@ -187,6 +187,28 @@
                                 }
                             ]
                         }, {
+                            itemType: "group",
+                            name: "PriceInfo",
+                            caption: "Price Info",
+                            colCount: 2,
+                            items: [
+                                {
+                                    dataField: "Price",
+                                    label: { text: "Price" },
+                                    editorType: "dxNumberBox",
+                                    editorOptions: {
+                                        format: "#,##0 đ"
+                                    },
+                                    validationRules: [{
+                                        type: "required",
+                                        message: "Price is required"
+                                    }]
+                                },
+                                {
+                                    itemType: "empty"
+                                }
+                            ]
+                        }, {
                             itemType: "button",
                             horizontalAlignment: "left",
                             colSpan: 2,
@@ -195,27 +217,36 @@
                                 text: "Save",
                                 type: "default",
                                 stylingMode: "contained",
-                                useSubmitBehavior: true,
+                                //useSubmitBehavior: true,
                                 onClick: function () {
-                                    mainForm.getEditor("mainFormSubmit").option("useSubmitBehavior", false);
-                                    $("#popupForm").submit();
+                                    var name = productForm.getEditor("Name").option("value");
+                                    var code = productForm.getEditor("Code").option("value");
+                                    var unit = productForm.getEditor("Unit").option("value");
+                                    var brand = productForm.getEditor("Brand").option("value");
+                                    var origin = productForm.getEditor("Origin").option("value");
+                                    var size = productForm.getEditor("Size").option("value");
+                                    var price = productForm.getEditor("Price").option("value");
+                                    alert(code);
+
+                                    //mainForm.getEditor("mainFormSubmit").option("useSubmitBehavior", false);
+                                    //$("#popupForm").submit();
                                 }
                             },
                         }
                     ]
                 }).dxForm("instance");
 
-                leftCol.append(formContainer)
+                rightCol.append(formContainer)
                 e.append(popupContent)
 
                 var originEditor = productForm.getEditor("Origin");
                 originEditor.option("value", origins[0]["Name"]);
 
+                //$("#popupForm").on("submit", function (e) {
+                //    alert('#popupForm submit pressed');
+                //});
 
-
-                $("#popupForm").on("submit", function (e) {
-                    alert('#popupForm submit pressed');
-                });
+                displayProductSearchResult([]);
             }
         });
     }
@@ -228,50 +259,47 @@
 
         var list = $("#divSearchProduct").dxList({
             dataSource: products,
-            selectedItemKeys: selectedProductIds,
+            selectedItemKeys: [selectedProductId],
             selectionMode: "single",
             height: "100%",
             keyExpr: "Id",
             itemTemplate: function (data, index) {
                 var result = $("<div>").addClass("product");
                 result.text(data.Name);
-                var imageFile = data.ImageFile;
-                if (imageFile == undefined)
-                    imageFile = "photo.png";
+                if (index == 0) {
+                    var divAdd = $("<div>").addClass("add-product");
+                    divAdd.text("+");
+                    divAdd.prependTo(result);
+                } else {
+                    var imageFile = data.ImageFile;
+                    if (imageFile == undefined)
+                        imageFile = "photo.png";
 
-                //var row = $("<div").addClass("row align-items-center");
-                //row.appendTo(result);
-
-                //var col3 = $("<div>").addClass("col-3 pl-0 pr-0");
-                //col3.appendTo(row);
-                $("<img>").attr("src", "/data_images/" + imageFile).prependTo(result);
-
-                //var col9 = $("<div>").addClass("col-9 pl-1 pr-0");
-                //col9.appendTo(row);
-                //$("<div>").text(data.Name).appendTo(result);
-                //$("<div>").addClass("price")
-                //    .html(formatCurrency(data.Price)).appendTo(result);
-
+                    $("<img>").attr("src", "/data_images/" + imageFile).prependTo(result);
+                }
                 return result;
             },
             onSelectionChanged: function (e) {
-                selectedProductIds = e.addedItems.map(i => i.Id);
+                selectedProduct = e.addedItems[0];
+                selectedProductId = selectedProduct.Id;
+                displaySelectedProduct();
             }
         }).dxList("instance");
 
-        list.option("selectedItemKeys", selectedProductIds);
+        list.option("selectedItemKeys", [selectedProductId]);
+    }
 
-        //var output = "<div class='container'>";
-        //products.forEach(function (product) {
-        //    var name = product["Name"];
-        //    var imageFile = product["ImageFile"];
-        //    if (imageFile == undefined)
-        //        imageFile = "photo.png";
-
-        //    output = output + "<div class='row align-items-center'><div class='col-3 pl-0 pr-0'><img class='image_thumb' src='/data_images/" + imageFile + "'/></div>";
-        //    output = output + "<div class='col-9 pl-1 pr-0'>" + name + "</div></div>";
-        //});
-        //output = output + "</div>";
-        //$("#divSearchProduct").html(output);
+    function displaySelectedProduct() {
+        if (selectedProductId > 0 && selectedProduct != undefined) {
+            productForm.itemOption("ProductInfo", "caption", "Existing Product: " + selectedProduct["Name"]);
+            productForm.getEditor("Name").option("value", selectedProduct["Name"]);
+            productForm.getEditor("Code").option("value", selectedProduct["Code"]);
+            productForm.getEditor("Unit").option("value", getName(selectedProduct["Unit"], units));
+            productForm.getEditor("Brand").option("value", getName(selectedProduct["Brand"], brands));
+            productForm.getEditor("Origin").option("value", getName(selectedProduct["Origin"], origins));
+            productForm.getEditor("Size").option("value", getName(selectedProduct["Size"], sizes));
+        } else {
+            productForm.itemOption("ProductInfo", "caption", "New Product")
+        }
     }
 </script>

@@ -25,9 +25,9 @@ namespace GetNowServer.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Get(string name)
+        public async Task<IActionResult> Get(string name, int storeGroupId)
         {
-            var products = _context.ProductViews.FromSqlRaw("call proc_search_product({0});", name); //.Where(i => i.Name.Contains(name)).Take(20);
+            var products = _context.ProductViews.FromSqlRaw("call proc_search_product_for_store_group({0}, {1});", name, storeGroupId); //.Where(i => i.Name.Contains(name)).Take(20);
             return Json(await products.ToListAsync());
         }
 
